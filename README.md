@@ -1,0 +1,59 @@
+# FJCU imMBA — course website (AI-ADPD)
+
+Student project for the course *AI-Assisted Digital Product Development* (Prof. Yi-Ning Tu,
+Fu Jen Catholic University). It is a redesign of the official imMBA site
+(<https://www.management.fju.edu.tw/esubweb/immbaengindex/>) — cleaner, more professional and
+more international. **It is not the official website.**
+
+## How to open it
+Double-click `index.html`, or serve the folder:
+
+```bash
+python3 -m http.server 5173
+```
+
+## Structure
+```
+index.html              Landing page (all sections)
+assets/css/styles.css   Design system: tokens, components, responsive rules
+assets/js/layout.js     Notice bar + header/nav + footer (edit the menu here, once)
+assets/js/main.js       Language switch, mobile menu, dropdowns, reveal, lightbox
+assets/js/data/         Content data: faculty.js, news.js
+```
+
+## Homepage structure (as taught in class #4)
+1. **Top notice bar** — teaching-site notice, link to the official website, "Collapse main menu" button
+2. **Branding header** — logo + "Fu Jen Catholic University International MBA (imMBA)"
+3. **Navigation bar** — the same tabs as the official site (About, Admissions, Courses, Faculty,
+   imMBA Guide, Graduation, Dual Degree, Exchange, Highlights, News, Download), with hover dropdowns
+   and a "College of Management" secondary link
+4. **Action area** — language switch (EN / 中文) + **Apply Now**
+5. **Hero** — headline, value proposition, two CTA buttons
+
+Below the hero the page continues in the same order as the menu: accreditations, key figures,
+Overview, Learning Environment, Admissions + Tuition, Curriculum, Faculty, imMBA Guide,
+Graduation, Dual Degree, Exchange, Highlights, News, Downloads and Contact.
+
+## Logo
+`assets/img/logo.svg` — the "im" monogram inside a navy rounded square, crossed by a golden orbit
+with a small planet: *international management + international mobility*. It is drawn inline in
+`layout.js` (header and footer) and as a data-URI favicon in `index.html`.
+
+## Bilingual content
+Both languages live in the HTML side by side; the inactive one is hidden by CSS:
+
+```html
+<h2><span lang="en">Why imMBA</span><span lang="zh-Hant">為什麼選擇 imMBA</span></h2>
+```
+
+The choice is remembered in `localStorage`, and `?lang=zh` forces a language.
+
+## Link types
+- **Internal** — consistent menu/link styling, hover state.
+- **External** — opens in a new tab, marked with an external-link icon automatically.
+- **Resource** — document lists show the file type (PDF / XLS).
+- **Action (CTA)** — button style, action verb (Apply Now, See admission steps).
+
+## Still to do
+- About / Admissions / Curriculum as separate pages (menu links currently point to sections)
+- Publish: GitHub repository → Vercel
