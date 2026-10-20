@@ -93,3 +93,4 @@
 .preview-card p { font-size: .92rem; color: var(--ink-2); }
 .news-date { font-family: var(--font-sans) !important; font-size: .78rem !important; font-weight: 700 !important; letter-spacing: .02em; }
 @media (max-width: 860px) { .bilingual, .preview-grid { grid-template-columns: 1fr; } }
+.news-preview-thumb { width: 150px; height: 96px; border-radius: var(--radius-sm); }

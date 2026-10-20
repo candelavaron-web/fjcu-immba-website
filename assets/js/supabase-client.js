@@ -17,6 +17,7 @@
   }
 
   var PHOTO_BUCKET = "faculty-photos";
+  var NEWS_BUCKET = "news-images";
 
   /* ---------- Faculty ---------- */
 
@@ -90,15 +91,19 @@
 
   /* ---------- Faculty photos (Supabase Storage) ---------- */
 
-  function uploadPhoto(file) {
+  // Upload a file to a public bucket and return its public URL.
+  function uploadTo(bucket, file) {
     var ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     var path = Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
-    return client.storage.from(PHOTO_BUCKET).upload(path, file, { cacheControl: "3600", upsert: false })
+    return client.storage.from(bucket).upload(path, file, { cacheControl: "3600", upsert: false })
       .then(function (res) {
         if (res.error) throw res.error;
-        return client.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
+        return client.storage.from(bucket).getPublicUrl(path).data.publicUrl;
       });
   }
+
+  function uploadPhoto(file) { return uploadTo(PHOTO_BUCKET, file); }
+  function uploadNewsImage(file) { return uploadTo(NEWS_BUCKET, file); }
 
   function deletePhoto(url) {
     if (!url || url.indexOf(PHOTO_BUCKET) === -1) return Promise.resolve();
@@ -211,6 +216,7 @@
     deleteFaculty: deleteFaculty,
     saveOrder: saveOrder,
     uploadPhoto: uploadPhoto,
+    uploadNewsImage: uploadNewsImage,
     newsToView: newsToView,
     listNews: listNews,
     listNewsRaw: listNewsRaw,

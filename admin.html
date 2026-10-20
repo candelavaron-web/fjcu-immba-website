@@ -171,7 +171,19 @@
           <div class="field"><label for="n-status">Status</label>
             <select id="n-status"><option value="published">Published</option><option value="draft">Draft</option></select>
           </div>
-          <div class="field full"><label for="n-image">Image URL</label><input type="url" id="n-image" placeholder="https://"></div>
+          <div class="field full">
+            <label for="n-image-file">Image</label>
+            <div class="photo-field">
+              <div class="photo-preview news-preview-thumb" id="n-image-preview"><span>No image</span></div>
+              <div>
+                <input type="file" id="n-image-file" accept="image/*">
+                <span class="form-note">A screenshot or photo, up to 5 MB. Stored in Supabase Storage.</span>
+                <button class="btn btn-outline btn-sm mt-1" type="button" id="n-image-remove" hidden>Remove image</button>
+              </div>
+            </div>
+            <label for="n-image" class="mt-1">…or paste an image URL</label>
+            <input type="url" id="n-image" placeholder="https://">
+          </div>
 
           <!-- Bilingual fields, side by side -->
           <div class="bilingual full">

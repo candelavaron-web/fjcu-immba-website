@@ -409,12 +409,18 @@
     $("news-submit").textContent = "Save announcement";
     $("news-cancel-edit").hidden = true;
     $("news-preview").hidden = true;
+    pendingNewsImage = null;
+    $("n-image-file").value = "";
+    setNewsImagePreview("");
   }
 
   function startNewsEdit(row) {
     editingNews = row.id;
     Object.keys(newsFields).forEach(function (key) { $(newsFields[key]).value = row[key] || ""; });
     $("n-id").value = row.id;
+    pendingNewsImage = null;
+    $("n-image-file").value = "";
+    setNewsImagePreview(row.image_url || "");
     $("news-form-title").textContent = "Editing “" + row.title_en + "”";
     $("news-submit").textContent = "Save changes";
     $("news-cancel-edit").hidden = false;
@@ -432,6 +438,31 @@
       loadNews();
     });
   }
+
+  var pendingNewsImage = null;
+
+  function setNewsImagePreview(url) {
+    var box = $("n-image-preview");
+    box.innerHTML = url ? '<img src="' + url + '" alt="">' : "<span>No image</span>";
+    $("n-image-remove").hidden = !url;
+  }
+
+  $("n-image-file").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast("That image is larger than 5 MB.", true); this.value = ""; return; }
+    pendingNewsImage = file;
+    setNewsImagePreview(URL.createObjectURL(file));
+  });
+
+  $("n-image-remove").addEventListener("click", function () {
+    pendingNewsImage = null;
+    $("n-image-file").value = "";
+    $("n-image").value = "";
+    setNewsImagePreview("");
+  });
+
+  $("n-image").addEventListener("input", function () { setNewsImagePreview(this.value.trim()); });
 
   $("news-cancel-edit").addEventListener("click", resetNewsForm);
 
@@ -488,13 +519,21 @@
     row.status = $("n-status").value;
     row.title_en = $("n-title-en").value.trim();
 
-    var save = editingNews ? DB.updateNews(editingNews, row) : DB.createNews(row);
-    save.then(function (res) {
+    var upload = pendingNewsImage
+      ? DB.uploadNewsImage(pendingNewsImage).then(function (url) { row.image_url = url; })
+      : Promise.resolve();
+
+    upload.then(function () {
+      return editingNews ? DB.updateNews(editingNews, row) : DB.createNews(row);
+    }).then(function (res) {
       submit.disabled = false;
-      if (res.error) { toast(res.error.message, true); return; }
+      if (res && res.error) { toast(res.error.message, true); return; }
       toast(editingNews ? "Changes saved." : "Announcement published.");
       resetNewsForm();
       loadNews();
+    }).catch(function (err) {
+      submit.disabled = false;
+      toast(err.message || "Could not upload the image.", true);
     });
   });
 
