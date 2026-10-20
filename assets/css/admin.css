@@ -80,3 +80,16 @@
   .faculty-row .thumb { width: 44px; height: 44px; }
   .faculty-row .row-actions { grid-column: 1 / -1; }
 }
+
+/* AdminNews: the two languages side by side */
+.bilingual { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.lang-col { display: grid; gap: 16px; align-content: start; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg-soft); }
+.lang-col h4 { margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: .95rem; }
+.lang-col h4 .linklike { font-size: .78rem; font-weight: 500; }
+.lang-col .field { gap: 5px; }
+.preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.preview-card { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 20px; background: #fff; }
+.preview-card h3 { margin: 12px 0 8px; font-size: 1.1rem; }
+.preview-card p { font-size: .92rem; color: var(--ink-2); }
+.news-date { font-family: var(--font-sans) !important; font-size: .78rem !important; font-weight: 700 !important; letter-spacing: .02em; }
+@media (max-width: 860px) { .bilingual, .preview-grid { grid-template-columns: 1fr; } }

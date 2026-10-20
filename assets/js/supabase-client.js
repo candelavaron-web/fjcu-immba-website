@@ -106,6 +106,61 @@
     return client.storage.from(PHOTO_BUCKET).remove([path]);
   }
 
+  /* ---------- Announcements (news) ----------
+     One record holds both languages: Chinese and English titles,
+     summaries and bodies, plus the shared date, link and status. */
+
+  function newsToView(row) {
+    return {
+      id: row.id,
+      date: row.published_on,
+      category: row.category,
+      link: row.link_url || "",
+      image: row.image_url || "",
+      status: row.status,
+      title: { en: row.title_en || "", zh: row.title_zh || row.title_en || "" },
+      summary: { en: row.summary_en || "", zh: row.summary_zh || row.summary_en || "" },
+      body: { en: row.body_en || "", zh: row.body_zh || row.body_en || "" }
+    };
+  }
+
+  // Public list: published announcements, newest first. Falls back to
+  // assets/js/data/news.js when the backend is unreachable.
+  function listNews(limit) {
+    if (!client) return Promise.resolve({ rows: fallbackNews(limit), source: "local" });
+    var query = client.from("news").select("*").eq("status", "published")
+      .order("published_on", { ascending: false });
+    if (limit) query = query.limit(limit);
+    return query.then(function (res) {
+      if (res.error || !res.data || !res.data.length) {
+        return { rows: fallbackNews(limit), source: res.error ? "local" : "cloud" };
+      }
+      return { rows: res.data.map(newsToView), source: "cloud" };
+    }).catch(function () { return { rows: fallbackNews(limit), source: "local" }; });
+  }
+
+  function fallbackNews(limit) {
+    var rows = (window.NEWS || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    return (limit ? rows.slice(0, limit) : rows).map(function (n) {
+      return {
+        id: n.id, date: n.date, category: n.category, link: "", image: n.image,
+        status: "published", title: n.title, summary: n.summary,
+        body: { en: (n.body.en || []).join("\n\n"), zh: (n.body.zh || []).join("\n\n") }
+      };
+    });
+  }
+
+  // Admin list: everything, drafts included.
+  function listNewsRaw() {
+    return client.from("news").select("*")
+      .order("published_on", { ascending: false })
+      .order("sort_order", { ascending: true });
+  }
+
+  function createNews(row) { return client.from("news").insert(row).select().single(); }
+  function updateNews(id, row) { return client.from("news").update(row).eq("id", id).select().single(); }
+  function deleteNews(id) { return client.from("news").delete().eq("id", id); }
+
   /* ---------- Authentication & roles ---------- */
 
   function signUp(email, password, fullName) {
@@ -156,6 +211,12 @@
     deleteFaculty: deleteFaculty,
     saveOrder: saveOrder,
     uploadPhoto: uploadPhoto,
+    newsToView: newsToView,
+    listNews: listNews,
+    listNewsRaw: listNewsRaw,
+    createNews: createNews,
+    updateNews: updateNews,
+    deleteNews: deleteNews,
     deletePhoto: deletePhoto,
     signUp: signUp,
     signIn: signIn,

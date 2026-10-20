@@ -486,6 +486,10 @@
         <h2><span lang="en">Latest from imMBA</span><span lang="zh-Hant">國際經管近期動態</span></h2>
       </div>
       <div class="grid grid-3" id="news-grid"></div>
+      <p class="source-note reveal">
+        <span lang="en">Source: announcements published on the <a href="https://www.management.fju.edu.tw/esubweb/immbaengindex/news.php" target="_blank" rel="noopener">official imMBA news page</a>.</span>
+        <span lang="zh-Hant">資料來源：<a href="https://www.management.fju.edu.tw/subweb/immba/news.php" target="_blank" rel="noopener">國際經管官方網站公告</a>。</span>
+      </p>
     </div>
   </section>
 
@@ -614,6 +618,33 @@
     renderFaculty(btn.getAttribute("data-filter"));
   });
 
+  /* Announcements: date, title, summary and a "View details" link,
+     read from Supabase (falls back to assets/js/data/news.js). */
+  var CATEGORY = window.NEWS_CATEGORIES || {};
+  function fmtDate(d, lang) {
+    var date = new Date(d + "T00:00:00");
+    return date.toLocaleDateString(lang === "zh" ? "zh-TW" : "en-GB",
+      { year: "numeric", month: "short", day: "numeric" });
+  }
+
+  window.DB.listNews(3).then(function (res) {
+    document.getElementById("news-grid").innerHTML = res.rows.map(function (n) {
+      var cat = CATEGORY[n.category] || { en: n.category, zh: n.category };
+      var details = n.link
+        ? '<a class="link-arrow" href="' + n.link + '" target="_blank" rel="noopener">' +
+            bi("View details", "查看詳情") + '<span data-icon="external"></span></a>'
+        : '<span class="link-arrow muted">' + bi("Details coming soon", "詳情即將公布") + "</span>";
+      return '<article class="media-card news-card reveal">' +
+        '<div class="media"><img src="' + n.image + '" alt="" loading="lazy"></div>' +
+        '<div class="body"><div class="meta"><span class="badge">' + bi(cat.en, cat.zh) + "</span>" +
+        '<time datetime="' + n.date + '">' + bi(fmtDate(n.date, "en"), fmtDate(n.date, "zh")) + "</time></div>" +
+        "<h3>" + bi(esc(n.title.en), esc(n.title.zh)) + "</h3>" +
+        "<p>" + bi(esc(n.summary.en), esc(n.summary.zh)) + "</p>" +
+        '<div class="card-foot">' + details + "</div></div></article>";
+    }).join("");
+    paintIcons();
+  });
+
   /* Highlights gallery (stock placeholders — swap for real event photos) */
   var photos = [
     { src: "1529070538774-1843cb3265df", en: "Outdoor English Corner in Yilan", zh: "宜蘭戶外英語角", meta: { en: "Student life", zh: "學生生活" } },
@@ -638,7 +669,7 @@
       if (!el.firstChild) el.innerHTML = window.IMMBA.ICONS[el.getAttribute("data-icon")] || "";
     });
     requestAnimationFrame(function () {
-      document.querySelectorAll("#faculty-grid .reveal, #faculty .reveal, #news-grid .reveal, #gallery .reveal")
+      document.querySelectorAll("#faculty-grid .reveal, #faculty .reveal, #news .reveal, #news-grid .reveal, #gallery .reveal")
         .forEach(function (el) { el.classList.add("in"); });
     });
   }

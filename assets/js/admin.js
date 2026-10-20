@@ -6,6 +6,7 @@
   "use strict";
 
   var $ = function (id) { return document.getElementById(id); };
+  var esc = function (v) { return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
   var views = {
     setup: $("view-setup"),
     auth: $("view-auth"),
@@ -120,6 +121,8 @@
         show("admin");
         $("tab-admins-btn").hidden = role !== "super_admin";
         loadFaculty();
+        loadNews();
+        resetNewsForm();
         if (role === "super_admin") loadAdmins();
       } else {
         show("pending");
@@ -325,6 +328,173 @@
     }).catch(function (err) {
       submit.disabled = false;
       toast(err.message || "Something went wrong.", true);
+    });
+  });
+
+  /* ---------------------------------------------------------
+     AdminNews: bilingual announcements (class #5)
+     One record holds both languages — created, edited, previewed
+     and deleted together.
+     --------------------------------------------------------- */
+  var newsRows = [];
+  var editingNews = null;
+
+  var newsFields = {
+    published_on: "n-date", category: "n-category", link_url: "n-link",
+    status: "n-status", image_url: "n-image",
+    title_en: "n-title-en", title_zh: "n-title-zh",
+    summary_en: "n-summary-en", summary_zh: "n-summary-zh",
+    body_en: "n-body-en", body_zh: "n-body-zh"
+  };
+
+  var CATEGORY_LABEL = {
+    admissions: "Admissions", academics: "Academics", partners: "Global partners",
+    community: "Student life", notice: "Notices"
+  };
+
+  function loadNews() {
+    DB.listNewsRaw().then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      newsRows = res.data || [];
+      renderNews();
+    });
+  }
+
+  function renderNews() {
+    var list = $("news-list");
+    list.innerHTML = newsRows.map(function (row) {
+      var badge = row.status === "draft" ? "gray" : "green";
+      var missing = !row.title_zh || !row.body_zh;
+      return '<div class="faculty-row" data-news="' + row.id + '">' +
+        '<span class="thumb news-date">' + row.published_on.slice(5).replace("-", "/") + "</span>" +
+        '<span class="who"><strong></strong><span></span></span>' +
+        '<span class="row-actions">' +
+          '<span class="badge ' + badge + '">' + row.status + "</span>" +
+          (missing ? '<span class="badge gold" title="The Chinese version is incomplete">中文 ?</span>' : "") +
+        "</span>" +
+        '<span class="row-actions">' +
+          '<button class="icon-btn" type="button" data-nact="edit" title="Edit">✎</button>' +
+          '<button class="icon-btn danger" type="button" data-nact="delete" title="Delete">🗑</button>' +
+        "</span></div>";
+    }).join("");
+
+    // fill text safely and wire the buttons
+    newsRows.forEach(function (row) {
+      var el = list.querySelector('[data-news="' + row.id + '"]');
+      if (!el) return;
+      el.querySelector(".who strong").textContent = row.title_en;
+      el.querySelector(".who span").textContent =
+        [CATEGORY_LABEL[row.category] || row.category, row.title_zh || "—"].join(" · ");
+      el.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-nact]");
+        if (!btn) return;
+        if (btn.getAttribute("data-nact") === "edit") startNewsEdit(row);
+        else deleteNewsRow(row, el);
+      });
+    });
+
+    $("news-count").textContent = newsRows.length + " announcements · " +
+      newsRows.filter(function (r) { return r.status === "published"; }).length + " published";
+    if (!newsRows.length) {
+      list.innerHTML = '<p class="empty-state">No announcements yet.</p>';
+    }
+  }
+
+  function resetNewsForm() {
+    editingNews = null;
+    $("news-form").reset();
+    $("n-id").value = "";
+    $("n-date").value = new Date().toISOString().slice(0, 10);
+    $("news-form-title").textContent = "Add an announcement";
+    $("news-submit").textContent = "Save announcement";
+    $("news-cancel-edit").hidden = true;
+    $("news-preview").hidden = true;
+  }
+
+  function startNewsEdit(row) {
+    editingNews = row.id;
+    Object.keys(newsFields).forEach(function (key) { $(newsFields[key]).value = row[key] || ""; });
+    $("n-id").value = row.id;
+    $("news-form-title").textContent = "Editing “" + row.title_en + "”";
+    $("news-submit").textContent = "Save changes";
+    $("news-cancel-edit").hidden = false;
+    $("news-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function deleteNewsRow(row, el) {
+    // Deleting once removes both language versions: they are one record.
+    if (!confirm("Delete “" + row.title_en + "”? Both the English and Chinese versions are removed.")) return;
+    el.classList.add("is-busy");
+    DB.deleteNews(row.id).then(function (res) {
+      if (res.error) { el.classList.remove("is-busy"); toast(res.error.message, true); return; }
+      toast("Announcement deleted.");
+      if (editingNews === row.id) resetNewsForm();
+      loadNews();
+    });
+  }
+
+  $("news-cancel-edit").addEventListener("click", resetNewsForm);
+
+  // "copy from" helpers: a starting point for the other language, then edit it
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var toZh = btn.getAttribute("data-copy") === "en-to-zh";
+      [["title", "n-title"], ["summary", "n-summary"], ["body", "n-body"]].forEach(function (pair) {
+        var from = $(pair[1] + (toZh ? "-en" : "-zh"));
+        var to = $(pair[1] + (toZh ? "-zh" : "-en"));
+        if (from.value && !to.value) to.value = from.value;
+      });
+      toast("Copied across — now edit the translation.");
+    });
+  });
+
+  // Preview both languages before publishing
+  function previewHTML(title, summary, body) {
+    var paragraphs = (body || "").split(/\n{2,}/).filter(Boolean)
+      .map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("");
+    return "<h3>" + esc(title || "—") + "</h3>" +
+      (summary ? '<p class="muted">' + esc(summary) + "</p>" : "") + paragraphs;
+  }
+
+  $("news-preview-btn").addEventListener("click", function () {
+    $("preview-en").innerHTML = previewHTML($("n-title-en").value, $("n-summary-en").value, $("n-body-en").value);
+    $("preview-zh").innerHTML = previewHTML($("n-title-zh").value, $("n-summary-zh").value, $("n-body-zh").value);
+    var missing = [];
+    if (!$("n-title-zh").value) missing.push("Chinese title");
+    if (!$("n-summary-zh").value && $("n-summary-en").value) missing.push("Chinese summary");
+    if (!$("n-body-zh").value && $("n-body-en").value) missing.push("Chinese content");
+    if (!$("n-body-en").value && $("n-body-zh").value) missing.push("English content");
+    $("preview-warning").textContent = missing.length
+      ? "The two versions are not synchronised yet — missing: " + missing.join(", ") + "."
+      : "Both versions are complete.";
+    $("news-preview").hidden = false;
+    $("news-preview").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("news-preview-close").addEventListener("click", function () { $("news-preview").hidden = true; });
+
+  $("news-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var submit = $("news-submit");
+    submit.disabled = true;
+
+    var row = {};
+    Object.keys(newsFields).forEach(function (key) {
+      var value = $(newsFields[key]).value.trim();
+      row[key] = value || null;
+    });
+    row.published_on = $("n-date").value;
+    row.category = $("n-category").value;
+    row.status = $("n-status").value;
+    row.title_en = $("n-title-en").value.trim();
+
+    var save = editingNews ? DB.updateNews(editingNews, row) : DB.createNews(row);
+    save.then(function (res) {
+      submit.disabled = false;
+      if (res.error) { toast(res.error.message, true); return; }
+      toast(editingNews ? "Changes saved." : "Announcement published.");
+      resetNewsForm();
+      loadNews();
     });
   });
 

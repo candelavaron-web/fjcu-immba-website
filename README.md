@@ -14,7 +14,10 @@ python3 -m http.server 5173
 
 ## Structure
 ```
-index.html              Landing page (all sections)
+index.html              Home page (every section of the menu)
+about.html              Overview & Ranking · Our Learning Environment
+admissions.html         How to apply · Tuition & Scholarships
+curriculum.html         Courses & Requirements · Graduation
 assets/css/styles.css   Design system: tokens, components, responsive rules
 assets/js/layout.js     Notice bar + header/nav + footer (edit the menu here, once)
 assets/js/main.js       Language switch, mobile menu, dropdowns, reveal, lightbox
@@ -73,6 +76,18 @@ shows an empty page.
 
 Administrator roles: `pending` → `admin` → `super_admin` (approves others).
 
+## Announcements (class #5)
+`supabase/news.sql` creates the `news` table, where **one record holds both
+languages** (Chinese and English title, summary and content) plus the shared
+date, link, status and display order. The back office has an **Announcements**
+tab to create, preview, edit and delete them: deleting once removes both
+language versions, and the preview shows the two side by side and warns when
+they are not synchronised.
+
+The home page shows the three most recent announcements as cards with date,
+title, summary and a "View details" link to the original announcement, plus a
+source reference.
+
 ## Still to do
-- About / Admissions / Curriculum as separate pages (menu links currently point to sections)
-- Move the News section to Supabase as well
+- Faculty, imMBA Guide, Graduation and Highlights still live as sections of the
+  home page rather than separate pages

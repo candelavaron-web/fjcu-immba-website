@@ -84,6 +84,7 @@
   <section id="view-admin" hidden>
     <nav class="tabs" data-tabs>
       <button class="tab-btn" type="button" data-tab="tab-faculty">Faculty</button>
+      <button class="tab-btn" type="button" data-tab="tab-news">Announcements</button>
       <button class="tab-btn" type="button" data-tab="tab-admins" id="tab-admins-btn" hidden>Administrators</button>
     </nav>
 
@@ -138,6 +139,82 @@
           <span class="result-count" id="faculty-count"></span>
         </div>
         <div id="faculty-list" class="faculty-rows"></div>
+      </div>
+    </div>
+
+    <!-- AdminNews: bilingual announcements -->
+    <div class="tab-panel" id="tab-news" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="news-form-title">Add an announcement</h2>
+            <p class="muted mb-0">One record, two languages: the Chinese and English versions are created, edited and deleted together.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="news-cancel-edit" hidden>Cancel editing</button>
+        </div>
+
+        <form id="news-form" class="form-grid">
+          <input type="hidden" id="n-id">
+
+          <!-- Shared fields -->
+          <div class="field"><label for="n-date">Date *</label><input type="date" id="n-date" required></div>
+          <div class="field"><label for="n-category">Category</label>
+            <select id="n-category">
+              <option value="admissions">Admissions</option>
+              <option value="academics">Academics</option>
+              <option value="partners">Global partners</option>
+              <option value="community">Student life</option>
+              <option value="notice" selected>Notices</option>
+            </select>
+          </div>
+          <div class="field"><label for="n-link">Link URL <span class="muted">(View details)</span></label><input type="url" id="n-link" placeholder="https://"></div>
+          <div class="field"><label for="n-status">Status</label>
+            <select id="n-status"><option value="published">Published</option><option value="draft">Draft</option></select>
+          </div>
+          <div class="field full"><label for="n-image">Image URL</label><input type="url" id="n-image" placeholder="https://"></div>
+
+          <!-- Bilingual fields, side by side -->
+          <div class="bilingual full">
+            <div class="lang-col">
+              <h4>English <button class="linklike" type="button" data-copy="zh-to-en">← copy from 中文</button></h4>
+              <div class="field"><label for="n-title-en">Title *</label><input type="text" id="n-title-en" required></div>
+              <div class="field"><label for="n-summary-en">Summary</label><textarea id="n-summary-en" rows="2"></textarea></div>
+              <div class="field"><label for="n-body-en">Content</label><textarea id="n-body-en" rows="8"></textarea></div>
+            </div>
+            <div class="lang-col">
+              <h4>中文 <button class="linklike" type="button" data-copy="en-to-zh">copy from English →</button></h4>
+              <div class="field"><label for="n-title-zh">標題</label><input type="text" id="n-title-zh"></div>
+              <div class="field"><label for="n-summary-zh">摘要</label><textarea id="n-summary-zh" rows="2"></textarea></div>
+              <div class="field"><label for="n-body-zh">內容</label><textarea id="n-body-zh" rows="8"></textarea></div>
+            </div>
+          </div>
+
+          <div class="field full btn-row">
+            <button class="btn btn-primary" type="submit" id="news-submit">Save announcement</button>
+            <button class="btn btn-outline" type="button" id="news-preview-btn">Preview both languages</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview: check that the two versions say the same thing -->
+      <div class="panel" id="news-preview" hidden>
+        <div class="panel-head">
+          <h2>Preview</h2>
+          <button class="btn btn-outline btn-sm" type="button" id="news-preview-close">Close preview</button>
+        </div>
+        <div class="preview-grid">
+          <article class="preview-card"><span class="badge gray">English</span><div id="preview-en"></div></article>
+          <article class="preview-card"><span class="badge gray">中文</span><div id="preview-zh"></div></article>
+        </div>
+        <p class="form-note" id="preview-warning"></p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Announcements</h2>
+          <span class="result-count" id="news-count"></span>
+        </div>
+        <div id="news-list" class="faculty-rows"></div>
       </div>
     </div>
 

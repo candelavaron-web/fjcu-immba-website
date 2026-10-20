@@ -736,3 +736,17 @@ img.avatar { object-fit: cover; }
 /* The compass-rose mark is a circle, so it needs no square plate. */
 .brand-mark { border-radius: 50%; background: none; }
 .brand-mark::after { display: none; }
+
+/* Announcement cards (class #5: lift, shadow, border and pointer on hover) */
+.news-card { cursor: pointer; border-color: var(--line); }
+.news-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--gold-400); }
+.news-card .body { gap: 10px; }
+.news-card time { font-variant-numeric: tabular-nums; }
+.news-card .card-foot { margin-top: auto; padding-top: 12px; }
+.news-card .link-arrow { font-size: .9rem; }
+.source-note { margin-top: 28px; font-size: .86rem; color: var(--muted); }
+/* The logo itself opens the back office (class #5, slide 12) */
+.brand-logo { display: inline-flex; flex-shrink: 0; border-radius: 50%; }
+.brand-logo:focus-visible { outline-offset: 3px; }
+.brandbar .container > .brand-logo + .brand { margin-left: -2px; }
+.brandbar .container { display: flex; align-items: center; gap: 14px; }

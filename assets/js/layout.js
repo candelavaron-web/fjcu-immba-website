@@ -61,24 +61,24 @@
      index.html; when a real page is built, swap "#section" for "page.html". */
   var NAV = [
     { id: "about", en: "About", zh: "簡介", children: [
-      { href: "#overview", en: "Overview and Ranking", zh: "特色與排名", den: "AACSB, rankings, history", dzh: "AACSB認證、排名與沿革" },
-      { href: "#environment", en: "Our Learning Environment", zh: "學習環境", den: "Campus, facilities, location", dzh: "校園、設施與交通" }
+      { href: "about.html#overview", en: "Overview and Ranking", zh: "特色與排名", den: "AACSB, rankings, history", dzh: "AACSB認證、排名與沿革" },
+      { href: "about.html#environment", en: "Our Learning Environment", zh: "學習環境", den: "Campus, facilities, location", dzh: "校園、設施與交通" }
     ]},
     { id: "admissions", en: "Admissions", zh: "招生資訊", children: [
-      { href: "#admissions", en: "Apply for Fu Jen imMBA", zh: "MBA招生資訊", den: "International & local tracks", dzh: "外籍生與本地生管道" },
-      { href: "#tuition", en: "Tuition & Scholarships", zh: "獎助學金資訊", den: "Fees and funding", dzh: "學雜費與各項獎學金" }
+      { href: "admissions.html", en: "Apply for Fu Jen imMBA", zh: "MBA招生資訊", den: "International & local tracks", dzh: "外籍生與本地生管道" },
+      { href: "admissions.html#tuition", en: "Tuition & Scholarships", zh: "獎助學金資訊", den: "Fees and funding", dzh: "學雜費與各項獎學金" }
     ]},
     { id: "courses", en: "Courses", zh: "課程資訊", children: [
-      { href: "#curriculum", en: "Curriculum and Requirements", zh: "課程與修業規則", den: "Credits, thesis, waivers", dzh: "學分、論文與抵免" }
+      { href: "curriculum.html", en: "Curriculum and Requirements", zh: "課程與修業規則", den: "Credits, thesis, waivers", dzh: "學分、論文與抵免" }
     ]},
-    { id: "faculty", en: "Faculty", zh: "師資介紹", href: "#faculty" },
-    { id: "guide", en: "imMBA Guide", zh: "imMBA全攻略", href: "#guide" },
-    { id: "graduation", en: "Graduation", zh: "畢業與離校", href: "#graduation" },
-    { id: "dual", en: "Dual Degree", zh: "跨國雙碩士", href: "#dual-degree" },
-    { id: "exchange", en: "Exchange", zh: "海外交換", href: "#exchange" },
-    { id: "highlights", en: "Highlights", zh: "活動集錦", href: "#highlights" },
-    { id: "news", en: "News", zh: "公告", href: "#news" },
-    { id: "download", en: "Download", zh: "表格下載", href: "#resources" }
+    { id: "faculty", en: "Faculty", zh: "師資介紹", href: "index.html#faculty" },
+    { id: "guide", en: "imMBA Guide", zh: "imMBA全攻略", href: "index.html#guide" },
+    { id: "graduation", en: "Graduation", zh: "畢業與離校", href: "curriculum.html#graduation" },
+    { id: "dual", en: "Dual Degree", zh: "跨國雙碩士", href: "index.html#dual-degree" },
+    { id: "exchange", en: "Exchange", zh: "海外交換", href: "index.html#exchange" },
+    { id: "highlights", en: "Highlights", zh: "活動集錦", href: "index.html#highlights" },
+    { id: "news", en: "News", zh: "公告", href: "index.html#news" },
+    { id: "download", en: "Download", zh: "表格下載", href: "index.html#resources" }
   ];
 
   var EXTERNAL = {
@@ -153,7 +153,8 @@
     "</div></div>" +
     /* 2. Branding header: logo + program name */
     '<div class="brandbar"><div class="container">' +
-      '<a class="brand" href="index.html" aria-label="FJCU imMBA home">' + LOGO() +
+      '<a class="brand-logo" href="admin.html" data-aria-en="Back office" data-aria-zh="後台管理" title="Back office">' + LOGO() + "</a>" +
+      '<a class="brand" href="index.html" aria-label="FJCU imMBA home">' +
         '<span class="brand-text"><span class="brand-name">' +
           bi("Fu Jen Catholic University International MBA", "輔仁大學國際經營管理碩士學位學程") + ' <span class="brand-abbr">(imMBA)</span></span>' +
         '<span class="brand-sub">' + bi("College of Management · AACSB accredited · Taught in English", "管理學院 ・ AACSB 國際認證 ・ 全英語授課") + "</span></span>" +
@@ -165,11 +166,11 @@
         '<ul class="nav-list">' + navHTML() + "</ul>" +
         '<a class="nav-secondary ext" href="' + EXTERNAL.college + '" target="_blank" rel="noopener">' +
           bi("College of Management", "管理學院") + "</a>" +
-        '<a class="btn btn-gold btn-apply-mobile" href="#admissions">' + bi("Apply Now", "立即申請") + ICONS.arrow + "</a>" +
+        '<a class="btn btn-gold btn-apply-mobile" href="admissions.html">' + bi("Apply Now", "立即申請") + ICONS.arrow + "</a>" +
       "</nav>" +
       '<div class="header-actions">' +
         langBtn() +
-        '<a class="btn btn-primary btn-sm btn-apply" href="#admissions">' + bi("Apply Now", "立即申請") + "</a>" +
+        '<a class="btn btn-primary btn-sm btn-apply" href="admissions.html">' + bi("Apply Now", "立即申請") + "</a>" +
         '<button class="menu-toggle" type="button" aria-controls="main-nav" aria-expanded="false" aria-label="Menu"><span></span></button>' +
       "</div>" +
     "</div></header>";
@@ -186,15 +187,15 @@
         ) + "</p>" +
       "</div>" +
       "<div><h4>" + bi("Program", "學程") + "</h4><ul>" +
-        '<li><a href="#overview">' + bi("Overview & Rankings", "特色與排名") + "</a></li>" +
-        '<li><a href="#curriculum">' + bi("Curriculum", "課程資訊") + "</a></li>" +
-        '<li><a href="#dual-degree">' + bi("Dual Master's Degree", "跨國雙碩士") + "</a></li>" +
-        '<li><a href="#faculty">' + bi("Faculty", "師資介紹") + "</a></li>" +
-        '<li><a href="#news">' + bi("News", "最新消息") + "</a></li>" +
+        '<li><a href="about.html#overview">' + bi("Overview & Rankings", "特色與排名") + "</a></li>" +
+        '<li><a href="curriculum.html">' + bi("Curriculum", "課程資訊") + "</a></li>" +
+        '<li><a href="index.html#dual-degree">' + bi("Dual Master's Degree", "跨國雙碩士") + "</a></li>" +
+        '<li><a href="index.html#faculty">' + bi("Faculty", "師資介紹") + "</a></li>" +
+        '<li><a href="index.html#news">' + bi("News", "最新消息") + "</a></li>" +
       "</ul></div>" +
       "<div><h4>" + bi("Resources", "資源") + "</h4><ul>" +
-        '<li><a href="#admissions">' + bi("Admissions", "招生資訊") + "</a></li>" +
-        '<li><a href="#resources">' + bi("Forms & Downloads", "表格下載") + "</a></li>" +
+        '<li><a href="admissions.html">' + bi("Admissions", "招生資訊") + "</a></li>" +
+        '<li><a href="index.html#resources">' + bi("Forms & Downloads", "表格下載") + "</a></li>" +
         '<li><a href="' + EXTERNAL.isc + '" target="_blank" rel="noopener">' + bi("International Student Center", "國際學生中心") + "</a></li>" +
         '<li><a href="' + EXTERNAL.library + '" target="_blank" rel="noopener">' + bi("FJCU Library", "輔大圖書館") + "</a></li>" +
         '<li><a href="' + EXTERNAL.college + '" target="_blank" rel="noopener">' + bi("College of Management", "管理學院") + "</a></li>" +
