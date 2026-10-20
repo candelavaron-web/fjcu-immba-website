@@ -521,7 +521,7 @@ tbody th { font-weight: 600; color: var(--navy-800); white-space: nowrap; }
 .site-footer a { color: #a9b8cc; }
 .site-footer a:hover { color: #fff; }
 .footer-brand .brand { color: #fff; margin-bottom: 18px; }
-.footer-brand .brand-mark { background: #fff; color: var(--navy-800); }
+.footer-brand .brand-mark { background: none; }
 .footer-brand .brand-sub { color: #8497b0; }
 .footer-brand p { max-width: 340px; }
 .footer-contact li { display: flex; gap: 10px; }
@@ -660,7 +660,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
 .brandbar { background: #fff; border-bottom: 1px solid var(--line); }
 .brandbar .container { padding-block: 18px; }
 .brandbar .brand { gap: 14px; }
-.brand-mark { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; background: none; }
+.brand-mark { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; background: none; }
 .brand-mark::after { display: none; }
 .brand-name { font-size: clamp(1.05rem, 2.2vw, 1.5rem); line-height: 1.2; }
 .brand-abbr { color: var(--gold-500); }
@@ -733,3 +733,6 @@ img.avatar { object-fit: cover; }
   .teacher { grid-template-columns: 104px minmax(0, 1fr); gap: 16px; padding: 18px; }
   .teacher-info li { grid-template-columns: 1fr; gap: 1px; }
 }
+/* The compass-rose mark is a circle, so it needs no square plate. */
+.brand-mark { border-radius: 50%; background: none; }
+.brand-mark::after { display: none; }

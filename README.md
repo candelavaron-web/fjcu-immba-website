@@ -35,9 +35,10 @@ Overview, Learning Environment, Admissions + Tuition, Curriculum, Faculty, imMBA
 Graduation, Dual Degree, Exchange, Highlights, News, Downloads and Contact.
 
 ## Logo
-`assets/img/logo.svg` — the "im" monogram inside a navy rounded square, crossed by a golden orbit
-with a small planet: *international management + international mobility*. It is drawn inline in
-`layout.js` (header and footer) and as a data-URI favicon in `index.html`.
+`assets/img/logo.svg` — a compass rose on a navy disc, with two of its points in gold:
+navigation, direction and a global outlook, with no letters. It is drawn inline in
+`layout.js` (header and footer, the footer using a lighter disc), in `admin.html`, and as a
+data-URI favicon in both pages.
 
 ## Bilingual content
 Both languages live in the HTML side by side; the inactive one is hidden by CSS:

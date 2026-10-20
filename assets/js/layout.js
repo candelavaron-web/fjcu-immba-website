@@ -122,11 +122,17 @@
   /* Shown on the left of the notice bar — put your student ID here. */
   var STUDENT = "Candela Varón · F15381051";
 
-  var LOGO = '<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">' +
-      '<rect width="64" height="64" rx="15" fill="#0a2342"/>' +
-      '<g transform="rotate(-18 32 33)"><ellipse cx="32" cy="33" rx="23" ry="9.5" fill="none" stroke="#d6b25e" stroke-width="1.8"/>' +
-      '<circle cx="55" cy="33" r="3.2" fill="#d6b25e"/></g>' +
-      '<text x="32" y="42" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="27" font-weight="700" fill="#fff">im</text></svg>';
+  /* Logo: a compass rose — navigation, direction, a global outlook.
+     variant "light" is the version used on the dark footer. */
+  function LOGO(variant) {
+    var disc = variant === "light" ? "#13365f" : "#0a2342";
+    return '<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">' +
+      '<circle cx="32" cy="32" r="28" fill="' + disc + '"/>' +
+      '<circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/>' +
+      '<path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/>' +
+      '<path d="M32 32 55 32l-18 5z" fill="#d6b25e"/>' +
+      '<path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>';
+  }
 
   var header = '' +
     /* 1. Top notice bar: teaching-site notice + official website link */
@@ -147,7 +153,7 @@
     "</div></div>" +
     /* 2. Branding header: logo + program name */
     '<div class="brandbar"><div class="container">' +
-      '<a class="brand" href="index.html" aria-label="FJCU imMBA home">' + LOGO +
+      '<a class="brand" href="index.html" aria-label="FJCU imMBA home">' + LOGO() +
         '<span class="brand-text"><span class="brand-name">' +
           bi("Fu Jen Catholic University International MBA", "輔仁大學國際經營管理碩士學位學程") + ' <span class="brand-abbr">(imMBA)</span></span>' +
         '<span class="brand-sub">' + bi("College of Management · AACSB accredited · Taught in English", "管理學院 ・ AACSB 國際認證 ・ 全英語授課") + "</span></span>" +
@@ -172,7 +178,7 @@
   var footer = '' +
     '<div class="container footer-main">' +
       '<div class="footer-brand">' +
-        '<a class="brand" href="index.html">' + LOGO + '<span class="brand-text"><span class="brand-name">FJCU imMBA</span>' +
+        '<a class="brand" href="index.html">' + LOGO("light") + '<span class="brand-text"><span class="brand-name">FJCU imMBA</span>' +
         '<span class="brand-sub">' + bi("College of Management", "管理學院") + "</span></span></a>" +
         "<p>" + bi(
           "An AACSB-accredited, fully English-taught MBA at Fu Jen Catholic University, preparing global business leaders in Taipei since 2006.",
