@@ -123,6 +123,7 @@
         loadFaculty();
         loadNews();
         resetNewsForm();
+        restoreDraft();
         if (role === "super_admin") loadAdmins();
       } else {
         show("pending");
@@ -441,6 +442,49 @@
 
   var pendingNewsImage = null;
 
+  /* Draft autosave: what you type survives a reload or leaving the page.
+     (The chosen image file cannot be stored, so it has to be picked again.) */
+  var DRAFT_KEY = "immba-news-draft";
+
+  function saveDraft() {
+    var draft = { editing: editingNews };
+    Object.keys(newsFields).forEach(function (key) { draft[key] = $(newsFields[key]).value; });
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage unavailable */ }
+  }
+
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
+  }
+
+  function restoreDraft() {
+    var raw = null;
+    try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+    if (!raw) return;
+    var draft;
+    try { draft = JSON.parse(raw); } catch (e) { return; }
+
+    var hasContent = Object.keys(newsFields).some(function (key) {
+      return key !== "published_on" && key !== "category" && key !== "status" && draft[key];
+    });
+    if (!hasContent) return;
+
+    Object.keys(newsFields).forEach(function (key) {
+      if (draft[key]) $(newsFields[key]).value = draft[key];
+    });
+    editingNews = draft.editing || null;
+    if (editingNews) {
+      $("n-id").value = editingNews;
+      $("news-form-title").textContent = "Editing an announcement (draft restored)";
+      $("news-submit").textContent = "Save changes";
+      $("news-cancel-edit").hidden = false;
+    } else {
+      $("news-form-title").textContent = "Add an announcement (draft restored)";
+    }
+    setNewsImagePreview($("n-image").value);
+    toast("Unsaved draft restored.");
+  }
+
+
   function setNewsImagePreview(url) {
     var box = $("n-image-preview");
     box.innerHTML = url ? '<img src="' + url + '" alt="">' : "<span>No image</span>";
@@ -464,7 +508,9 @@
 
   $("n-image").addEventListener("input", function () { setNewsImagePreview(this.value.trim()); });
 
-  $("news-cancel-edit").addEventListener("click", resetNewsForm);
+  $("news-form").addEventListener("input", saveDraft);
+  $("news-form").addEventListener("change", saveDraft);
+  $("news-cancel-edit").addEventListener("click", function () { clearDraft(); resetNewsForm(); });
 
   // "copy from" helpers: a starting point for the other language, then edit it
   document.querySelectorAll("[data-copy]").forEach(function (btn) {
@@ -529,6 +575,7 @@
       submit.disabled = false;
       if (res && res.error) { toast(res.error.message, true); return; }
       toast(editingNews ? "Changes saved." : "Announcement published.");
+      clearDraft();
       resetNewsForm();
       loadNews();
     }).catch(function (err) {
