@@ -6,6 +6,6 @@
    On Vercel this file is regenerated at build time from the environment
    variables VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (see vercel.json). */
 window.SUPABASE_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://edyyjiccwhwbqnedoeoq.supabase.co",
+  anonKey: "sb_publishable_1fW4LGw8LY_oZvvAvaZ6XA_WFeVpc5x"
 };
