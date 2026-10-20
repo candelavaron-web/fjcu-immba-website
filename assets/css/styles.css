@@ -692,3 +692,44 @@ html, body { overflow-x: hidden; max-width: 100%; }
 .topbar .student { font-weight: 700; color: #fff; padding-right: 14px; margin-right: 4px; border-right: 1px solid rgba(255,255,255,.22); }
 @media (max-width: 720px) { .topbar .student { display: block; border: 0; padding: 0; margin: 0 0 2px; } }
 img.avatar { object-fit: cover; }
+
+/* =========================================================
+   Faculty list — same layout as the official imMBA page:
+   photo on the left, labelled details on the right.
+   ========================================================= */
+.teacher-group {
+  font-family: var(--font-sans); font-size: .82rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--navy-800);
+  padding-bottom: 12px; margin: 48px 0 28px; border-bottom: 1px dotted var(--line-strong);
+}
+.teacher-group:first-child { margin-top: 0; }
+.teacher-group span { color: var(--muted); font-weight: 500; letter-spacing: .04em; }
+
+.teacher-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 2.6vw, 32px); }
+.teacher {
+  display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 20px;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; transition: box-shadow .25s, border-color .25s;
+}
+.teacher:hover { box-shadow: var(--shadow); border-color: var(--line-strong); }
+.teacher-photo { aspect-ratio: 3 / 4; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg-soft); }
+.teacher-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.teacher-photo .no-photo {
+  width: 100%; height: 100%; display: grid; place-items: center;
+  font-family: var(--font-serif); font-size: 1.8rem; font-weight: 600;
+  color: var(--navy-700); background: var(--blue-100);
+}
+.teacher-info { min-width: 0; }
+.teacher-info h3 { font-size: 1.12rem; margin-bottom: 2px; }
+.teacher-info .zh-name { color: var(--muted); font-weight: 500; font-size: .92rem; }
+.teacher-title { color: var(--gold-500); font-weight: 600; font-size: .88rem; margin-bottom: 12px; line-height: 1.45; }
+.teacher-info ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; }
+.teacher-info li { margin: 0; display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 10px; font-size: .88rem; }
+.t-label { color: var(--muted); font-weight: 600; font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; padding-top: 2px; }
+.t-value { color: var(--ink-2); overflow-wrap: anywhere; }
+
+@media (max-width: 980px) { .teacher-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .teacher { grid-template-columns: 104px minmax(0, 1fr); gap: 16px; padding: 18px; }
+  .teacher-info li { grid-template-columns: 1fr; gap: 1px; }
+}

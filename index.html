@@ -258,14 +258,20 @@
   <!-- ============ FACULTY ============ -->
   <section class="section section-soft content-block" id="faculty">
     <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow"><span lang="en">Faculty</span><span lang="zh-Hant">師資介紹</span></p>
+        <h2><span lang="en">Who teaches the program</span><span lang="zh-Hant">帶你學習的師資陣容</span></h2>
+        <p><span lang="en">The imMBA faculty comes from the departments of Business Administration, Finance &amp; International Business, Statistics &amp; Information Science and Cross-Cultural Studies.</span><span lang="zh-Hant">國際經管的師資來自企業管理系、金融與國際企業系、統計資訊系與跨文化研究所。</span></p>
+      </div>
       <div class="toolbar reveal">
-        <div class="section-head mb-0">
-          <p class="eyebrow"><span lang="en">Faculty</span><span lang="zh-Hant">師資介紹</span></p>
-          <h2><span lang="en">Who teaches the program</span><span lang="zh-Hant">帶你學習的師資陣容</span></h2>
+        <div class="chips" id="faculty-filter">
+          <button class="chip" type="button" data-filter="all" aria-pressed="true"><span lang="en">All faculty</span><span lang="zh-Hant">全部</span></button>
+          <button class="chip" type="button" data-filter="full" aria-pressed="false"><span lang="en">Full-Time Faculty</span><span lang="zh-Hant">專任教師</span></button>
+          <button class="chip" type="button" data-filter="part" aria-pressed="false"><span lang="en">Part-Time Faculty</span><span lang="zh-Hant">兼任教師</span></button>
         </div>
         <p class="result-count" id="faculty-count"></p>
       </div>
-      <div class="faculty-grid" id="faculty-grid"></div>
+      <div id="faculty-grid"></div>
     </div>
   </section>
 
@@ -546,54 +552,67 @@
   var bi = window.IMMBA.bi;
   var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
 
-  /* Faculty: read from Supabase; falls back to assets/js/data/faculty.js
-     when the cloud backend is unreachable or not configured yet. */
-  function renderFaculty(list) {
-    document.getElementById("faculty-grid").innerHTML = list.map(function (f) {
-      var initials = f.name.split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("");
-      var avatar = f.photo
-        ? '<img class="avatar" src="' + f.photo + '" alt="' + esc(f.name) + '">'
-        : '<span class="avatar" aria-hidden="true">' + esc(initials) + "</span>";
-      return '<article class="faculty-card reveal">' +
-        '<div class="faculty-head">' + avatar +
-        "<div><h3>" + esc(f.name) + (f.zh ? ' <span class="zh-name">' + esc(f.zh) + "</span>" : "") + "</h3>" +
-        '<p class="role">' + bi(esc(f.title.en), esc(f.title.zh)) + "</p></div></div>" +
-        '<ul class="tag-list">' + f.areas.en.slice(0, 3).map(function (a, i) {
-          return "<li>" + bi(esc(a), esc(f.areas.zh[i] || a)) + "</li>";
-        }).join("") + "</ul>" +
-        '<p class="edu">' + bi(esc(f.edu.en), esc(f.edu.zh)) + "</p>" +
-        '<div class="faculty-foot">' +
-        (f.email ? '<a href="mailto:' + f.email + '"><span data-icon="mail"></span>' + esc(f.email) + "</a>" : "") +
-        (f.ext ? '<span><span data-icon="phone"></span>' + esc(f.ext) + "</span>" : "") +
-        (f.web ? '<a href="' + f.web + '" target="_blank" rel="noopener"><span data-icon="external"></span>' +
-          bi("Personal website", "個人網站") + "</a>" : "") +
-        "</div></article>";
+  /* Faculty: read from Supabase (falls back to assets/js/data/faculty.js),
+     laid out like the official faculty page: photo on the left, labelled
+     details on the right, grouped into full-time and part-time. */
+  var facultyRows = [];
+
+  function facultyCard(f) {
+    var initials = f.name.split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("");
+    var media = f.photo
+      ? '<img src="' + f.photo + '" alt="' + esc(f.name) + '" loading="lazy">'
+      : '<span class="no-photo" aria-hidden="true">' + esc(initials) + "</span>";
+    function line(labelEn, labelZh, valueHtml) {
+      if (!valueHtml) return "";
+      return '<li><span class="t-label">' + bi(labelEn, labelZh) + "</span><span class=\"t-value\">" + valueHtml + "</span></li>";
+    }
+    return '<article class="teacher reveal">' +
+      '<div class="teacher-photo">' + media + "</div>" +
+      '<div class="teacher-info">' +
+        "<h3>" + esc(f.name) + (f.zh ? ' <span class="zh-name">' + esc(f.zh) + "</span>" : "") + "</h3>" +
+        '<p class="teacher-title">' + bi(esc(f.title.en), esc(f.title.zh)) + "</p>" +
+        "<ul>" +
+          line("Education", "學歷", bi(esc(f.edu.en), esc(f.edu.zh))) +
+          line("Specialties", "研究領域", bi(esc(f.areas.en.join(", ")), esc(f.areas.zh.join("、")))) +
+          line("TEL", "聯絡電話", f.ext ? esc(f.ext) : "") +
+          line("E-mail", "聯絡信箱", f.email ? '<a href="mailto:' + f.email + '">' + esc(f.email) + "</a>" : "") +
+          line("Website", "個人網站", f.web ? '<a href="' + f.web + '" target="_blank" rel="noopener">' + esc(f.web.replace(/^https?:\/\//, "")) + "</a>" : "") +
+        "</ul>" +
+      "</div></article>";
+  }
+
+  function renderFaculty(filter) {
+    var groups = [
+      { key: "full", en: "Full-Time Faculty", zh: "專任教師" },
+      { key: "part", en: "Part-Time Faculty", zh: "兼任教師" }
+    ];
+    var html = groups.map(function (g) {
+      if (filter !== "all" && filter !== g.key) return "";
+      var rows = facultyRows.filter(function (f) { return f.type === g.key; });
+      if (!rows.length) return "";
+      return '<h3 class="teacher-group reveal">' + bi(g.en, g.zh) +
+        ' <span>(' + rows.length + ")</span></h3>" +
+        '<div class="teacher-grid">' + rows.map(facultyCard).join("") + "</div>";
     }).join("");
+    document.getElementById("faculty-grid").innerHTML = html;
     paintIcons();
   }
 
   window.DB.listFaculty().then(function (result) {
-    var all = result.rows;
-    renderFaculty(all.filter(function (f) { return f.type === "full"; }).slice(0, 6));
+    facultyRows = result.rows;
+    renderFaculty("all");
     document.getElementById("faculty-count").innerHTML =
-      bi(all.length + " faculty members teach in the program", "共 " + all.length + " 位師資參與授課");
+      bi(facultyRows.length + " faculty members", "共 " + facultyRows.length + " 位師資");
   });
 
-  /* News: three most recent items */
-  var fmt = function (d, lang) {
-    var date = new Date(d + "T00:00:00");
-    return date.toLocaleDateString(lang === "zh" ? "zh-TW" : "en-GB", { year: "numeric", month: "short", day: "numeric" });
-  };
-  var items = window.NEWS.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 3);
-  document.getElementById("news-grid").innerHTML = items.map(function (n) {
-    var cat = window.NEWS_CATEGORIES[n.category];
-    return '<article class="media-card reveal">' +
-      '<div class="media"><img src="' + n.image + '" alt="" loading="lazy"></div>' +
-      '<div class="body"><div class="meta"><span class="badge">' + bi(cat.en, cat.zh) + "</span>" +
-      "<span>" + bi(fmt(n.date, "en"), fmt(n.date, "zh")) + "</span></div>" +
-      "<h3>" + bi(esc(n.title.en), esc(n.title.zh)) + "</h3>" +
-      "<p>" + bi(esc(n.summary.en), esc(n.summary.zh)) + "</p></div></article>";
-  }).join("");
+  document.getElementById("faculty-filter").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-filter]");
+    if (!btn) return;
+    this.querySelectorAll("[data-filter]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+    renderFaculty(btn.getAttribute("data-filter"));
+  });
 
   /* Highlights gallery (stock placeholders — swap for real event photos) */
   var photos = [
@@ -619,7 +638,7 @@
       if (!el.firstChild) el.innerHTML = window.IMMBA.ICONS[el.getAttribute("data-icon")] || "";
     });
     requestAnimationFrame(function () {
-      document.querySelectorAll("#faculty-grid .reveal, #news-grid .reveal, #gallery .reveal")
+      document.querySelectorAll("#faculty-grid .reveal, #faculty .reveal, #news-grid .reveal, #gallery .reveal")
         .forEach(function (el) { el.classList.add("in"); });
     });
   }

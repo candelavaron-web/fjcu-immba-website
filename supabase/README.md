@@ -53,3 +53,18 @@ protected by the row level security policies). Never copy the
 | `pending` | Registered and verified, but no access to the back office |
 | `admin` | Manage faculty: create, edit, delete, reorder, upload photos |
 | `super_admin` | Everything, plus approve or reject other administrators |
+
+## Faculty photos
+`supabase/faculty-photos/` holds the 19 official photos, named so they sort
+in the same order as the faculty list. To publish them:
+
+1. Supabase → **Storage** → bucket **faculty-photos** → **Upload files** →
+   select every file in `supabase/faculty-photos/`.
+2. SQL Editor → run [`photos.sql`](photos.sql), which sets `image_url` on
+   each faculty row to the public URL of its photo.
+
+From then on, photos are managed from the back office (`admin.html`):
+editing a faculty member and choosing a file uploads it to the same bucket.
+
+Photos belong to Fu Jen Catholic University, College of Management; they are
+reused here for a university course assignment.
