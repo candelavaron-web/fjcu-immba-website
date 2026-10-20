@@ -650,8 +650,8 @@
     // the rest as a compact list, like the official announcements page
     document.getElementById("news-list").innerHTML = rows.slice(3).map(function (n) {
       var title = bi(esc(n.title.en), esc(n.title.zh));
-      var inner = '<span class="n-title">' + title + "</span>" +
-        '<time datetime="' + n.date + '">' + n.date.replace(/-/g, "/") + "</time>";
+      var inner = '<time datetime="' + n.date + '">' + n.date.replace(/-/g, "/") + "</time>" +
+        '<span class="n-title">' + title + "</span>";
       return "<li>" + (n.link
         ? '<a href="' + n.link + '" target="_blank" rel="noopener">' + inner + '<span data-icon="external"></span></a>'
         : "<span>" + inner + "</span>") + "</li>";
