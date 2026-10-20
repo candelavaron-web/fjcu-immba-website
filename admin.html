@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Back office · FJCU imMBA</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230a2342'/%3E%3Cg transform='rotate(-18 32 33)'%3E%3Cellipse cx='32' cy='33' rx='23' ry='9.5' fill='none' stroke='%23d6b25e' stroke-width='2.4'/%3E%3Ccircle cx='55' cy='33' r='3.4' fill='%23d6b25e'/%3E%3C/g%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-size='27' font-weight='700' fill='white'%3Eim%3C/text%3E%3C/svg%3E">
+</head>
+<body class="admin-body">
+
+<header class="admin-header">
+  <div class="admin-bar">
+    <a class="admin-brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="15" fill="#0a2342"/>
+        <g transform="rotate(-18 32 33)"><ellipse cx="32" cy="33" rx="23" ry="9.5" fill="none" stroke="#d6b25e" stroke-width="1.8"/><circle cx="55" cy="33" r="3.2" fill="#d6b25e"/></g>
+        <text x="32" y="42" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="27" font-weight="700" fill="#fff">im</text>
+      </svg>
+      <span><strong>imMBA back office</strong><small>Faculty management</small></span>
+    </a>
+    <div class="admin-user" id="admin-user" hidden>
+      <span class="who"><span id="user-email"></span><span class="badge" id="user-role"></span></span>
+      <a class="btn btn-outline btn-sm" href="index.html" target="_blank" rel="noopener">View website</a>
+      <button class="btn btn-outline btn-sm" type="button" id="sign-out">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<main class="admin-main" id="admin-main">
+
+  <!-- Supabase not configured yet -->
+  <section class="panel" id="view-setup" hidden>
+    <h1>Connect Supabase first</h1>
+    <p class="muted">This back office needs a Supabase project. Follow the steps in <code>supabase/README.md</code>: create the project, run <code>supabase/schema.sql</code> in the SQL Editor, then put the Project URL and the anon key in <code>assets/js/supabase-config.js</code> (locally) or in the Vercel environment variables.</p>
+  </section>
+
+  <!-- Authentication -->
+  <section class="panel auth-panel" id="view-auth" hidden>
+    <h1 id="auth-title">Sign in</h1>
+    <p class="muted" id="auth-intro">Administrators of the imMBA website only.</p>
+
+    <form id="auth-form" class="form-grid">
+      <div class="field full" id="field-name" hidden>
+        <label for="auth-name">Full name</label>
+        <input type="text" id="auth-name" autocomplete="name">
+      </div>
+      <div class="field full">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" required autocomplete="email">
+      </div>
+      <div class="field full" id="field-password">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" required autocomplete="current-password" minlength="8">
+        <span class="form-note" id="password-hint" hidden>At least 8 characters.</span>
+      </div>
+      <div class="field full">
+        <button class="btn btn-primary" type="submit" id="auth-submit">Sign in</button>
+      </div>
+    </form>
+
+    <p class="auth-links">
+      <button type="button" class="linklike" data-auth-mode="signup">Create an account</button>
+      <button type="button" class="linklike" data-auth-mode="signin" hidden>I already have an account</button>
+      <button type="button" class="linklike" data-auth-mode="reset">Forgot your password?</button>
+    </p>
+  </section>
+
+  <!-- Registered but not approved yet -->
+  <section class="panel" id="view-pending" hidden>
+    <h1>Waiting for approval</h1>
+    <p class="muted">Your account is verified but it is still <strong>pending</strong>. A super administrator has to approve it before you can manage the website.</p>
+    <p class="muted">Authentication answers “who are you?”. Authorization answers “what are you allowed to do?” — and that part is still pending.</p>
+  </section>
+
+  <!-- Back office -->
+  <section id="view-admin" hidden>
+    <nav class="tabs" data-tabs>
+      <button class="tab-btn" type="button" data-tab="tab-faculty">Faculty</button>
+      <button class="tab-btn" type="button" data-tab="tab-admins" id="tab-admins-btn" hidden>Administrators</button>
+    </nav>
+
+    <!-- Faculty CRUD -->
+    <div class="tab-panel" id="tab-faculty">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="form-title">Add a faculty member</h2>
+            <p class="muted mb-0">Changes appear on the public Faculty section straight away.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="cancel-edit" hidden>Cancel editing</button>
+        </div>
+
+        <form id="faculty-form" class="form-grid">
+          <input type="hidden" id="f-id">
+          <div class="field"><label for="f-name">Name (English) *</label><input type="text" id="f-name" required></div>
+          <div class="field"><label for="f-name-zh">姓名（中文）</label><input type="text" id="f-name-zh"></div>
+          <div class="field"><label for="f-title">Title (English)</label><input type="text" id="f-title" placeholder="Associate Professor"></div>
+          <div class="field"><label for="f-title-zh">職稱（中文）</label><input type="text" id="f-title-zh" placeholder="副教授"></div>
+          <div class="field full"><label for="f-education">Education (English)</label><input type="text" id="f-education" placeholder="Ph.D. in …, University"></div>
+          <div class="field full"><label for="f-education-zh">學歷（中文）</label><input type="text" id="f-education-zh"></div>
+          <div class="field full"><label for="f-research">Research fields (English)</label><input type="text" id="f-research" placeholder="Separate with commas"><span class="form-note">Separate with commas.</span></div>
+          <div class="field full"><label for="f-research-zh">研究領域（中文）</label><input type="text" id="f-research-zh" placeholder="以頓號分隔"><span class="form-note">Separate with 、</span></div>
+          <div class="field"><label for="f-email">Email</label><input type="email" id="f-email"></div>
+          <div class="field"><label for="f-phone">Phone / office</label><input type="text" id="f-phone" placeholder="#2905, SL228"></div>
+          <div class="field"><label for="f-website">Personal website</label><input type="url" id="f-website" placeholder="https://"></div>
+          <div class="field"><label for="f-category">Category</label>
+            <select id="f-category"><option value="full">Full-time faculty</option><option value="part">Part-time faculty</option></select>
+          </div>
+          <div class="field full">
+            <label for="f-photo">Photo</label>
+            <div class="photo-field">
+              <div class="photo-preview" id="photo-preview"><span>No photo</span></div>
+              <div>
+                <input type="file" id="f-photo" accept="image/*">
+                <span class="form-note">JPG or PNG, up to 5 MB. Stored in Supabase Storage.</span>
+                <button class="btn btn-outline btn-sm mt-1" type="button" id="remove-photo" hidden>Remove photo</button>
+              </div>
+            </div>
+            <input type="hidden" id="f-image-url">
+          </div>
+          <div class="field full btn-row">
+            <button class="btn btn-primary" type="submit" id="faculty-submit">Save faculty member</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Faculty list</h2>
+          <span class="result-count" id="faculty-count"></span>
+        </div>
+        <div id="faculty-list" class="faculty-rows"></div>
+      </div>
+    </div>
+
+    <!-- Administrators (super_admin only) -->
+    <div class="tab-panel" id="tab-admins" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Administrators</h2>
+            <p class="muted mb-0">Approve or reject the people who registered in the back office.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Registered</th><th>Actions</th></tr></thead>
+            <tbody id="admins-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/data/faculty.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

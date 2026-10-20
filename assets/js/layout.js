@@ -192,6 +192,7 @@
         '<li><a href="' + EXTERNAL.isc + '" target="_blank" rel="noopener">' + bi("International Student Center", "國際學生中心") + "</a></li>" +
         '<li><a href="' + EXTERNAL.library + '" target="_blank" rel="noopener">' + bi("FJCU Library", "輔大圖書館") + "</a></li>" +
         '<li><a href="' + EXTERNAL.college + '" target="_blank" rel="noopener">' + bi("College of Management", "管理學院") + "</a></li>" +
+        '<li><a href="admin.html">' + bi("Back office", "後台管理") + "</a></li>" +
       "</ul></div>" +
       '<div><h4>' + bi("Contact", "聯絡我們") + '</h4><ul class="footer-contact">' +
         "<li>" + ICONS.pin + "<span>" + bi("Office LM208-1, No. 510 Zhongzheng Rd., Xinzhuang Dist., New Taipei City 24205, Taiwan", "24205 新北市新莊區中正路510號 利瑪竇大樓 LM208-1") + "</span></li>" +

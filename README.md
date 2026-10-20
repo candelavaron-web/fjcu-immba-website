@@ -54,6 +54,24 @@ The choice is remembered in `localStorage`, and `?lang=zh` forces a language.
 - **Resource** — document lists show the file type (PDF / XLS).
 - **Action (CTA)** — button style, action verb (Apply Now, See admission steps).
 
+## Cloud backend (class #6)
+Faculty data, photos and administrators live in **Supabase**:
+
+```
+supabase/schema.sql      tables, roles, row level security, storage bucket
+supabase/seed.sql        the 19 faculty members of the program
+supabase/README.md       step-by-step setup
+admin.html               back office: sign in, faculty CRUD, reorder, photos
+assets/js/supabase-*.js  connection details and the data API
+scripts/build-config.sh  writes the config from Vercel environment variables
+```
+
+The public Faculty section reads from Supabase and falls back to
+`assets/js/data/faculty.js` if the backend is unreachable, so the site never
+shows an empty page.
+
+Administrator roles: `pending` → `admin` → `super_admin` (approves others).
+
 ## Still to do
 - About / Admissions / Curriculum as separate pages (menu links currently point to sections)
-- Publish: GitHub repository → Vercel
+- Move the News section to Supabase as well

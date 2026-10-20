@@ -56,6 +56,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 img { max-width: 100%; height: auto; display: block; }
+[hidden] { display: none !important; }
 a { color: var(--blue-500); text-decoration: none; transition: color .2s; }
 a:hover { color: var(--navy-800); }
 p { margin: 0 0 1em; }
@@ -690,3 +691,4 @@ html, body { overflow-x: hidden; max-width: 100%; }
 .eyebrow.plain { text-transform: none; letter-spacing: .06em; font-size: .85rem; }
 .topbar .student { font-weight: 700; color: #fff; padding-right: 14px; margin-right: 4px; border-right: 1px solid rgba(255,255,255,.22); }
 @media (max-width: 720px) { .topbar .student { display: block; border: 0; padding: 0; margin: 0 0 2px; } }
+img.avatar { object-fit: cover; }

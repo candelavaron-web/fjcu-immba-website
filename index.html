@@ -534,8 +534,11 @@
 
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 <script src="assets/js/data/faculty.js"></script>
 <script src="assets/js/data/news.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
 /* Home page: render the faculty preview and the latest news from the data files. */
@@ -543,23 +546,38 @@
   var bi = window.IMMBA.bi;
   var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
 
-  /* Faculty: show the chair first, then a selection of professors */
-  var list = window.FACULTY.filter(function (f) { return f.type === "full"; }).slice(0, 6);
-  document.getElementById("faculty-grid").innerHTML = list.map(function (f) {
-    var initials = f.name.split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("");
-    return '<article class="faculty-card reveal">' +
-      '<div class="faculty-head"><span class="avatar" aria-hidden="true">' + esc(initials) + "</span>" +
-        '<div><h3>' + esc(f.name) + ' <span class="zh-name">' + esc(f.zh) + "</span></h3>" +
+  /* Faculty: read from Supabase; falls back to assets/js/data/faculty.js
+     when the cloud backend is unreachable or not configured yet. */
+  function renderFaculty(list) {
+    document.getElementById("faculty-grid").innerHTML = list.map(function (f) {
+      var initials = f.name.split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("");
+      var avatar = f.photo
+        ? '<img class="avatar" src="' + f.photo + '" alt="' + esc(f.name) + '">'
+        : '<span class="avatar" aria-hidden="true">' + esc(initials) + "</span>";
+      return '<article class="faculty-card reveal">' +
+        '<div class="faculty-head">' + avatar +
+        "<div><h3>" + esc(f.name) + (f.zh ? ' <span class="zh-name">' + esc(f.zh) + "</span>" : "") + "</h3>" +
         '<p class="role">' + bi(esc(f.title.en), esc(f.title.zh)) + "</p></div></div>" +
-      '<ul class="tag-list">' + f.areas.en.slice(0, 3).map(function (a, i) {
-        return "<li>" + bi(esc(a), esc(f.areas.zh[i] || a)) + "</li>";
-      }).join("") + "</ul>" +
-      '<p class="edu">' + bi(esc(f.edu.en), esc(f.edu.zh)) + "</p>" +
-      '<div class="faculty-foot"><a href="mailto:' + f.email + '"><span data-icon="mail"></span>' + f.email + "</a>" +
-      (f.ext ? "<span><span data-icon=\"phone\"></span>" + esc(f.ext) + "</span>" : "") + "</div></article>";
-  }).join("");
-  document.getElementById("faculty-count").innerHTML =
-    bi(window.FACULTY.length + " faculty members teach in the program", "共 " + window.FACULTY.length + " 位師資參與授課");
+        '<ul class="tag-list">' + f.areas.en.slice(0, 3).map(function (a, i) {
+          return "<li>" + bi(esc(a), esc(f.areas.zh[i] || a)) + "</li>";
+        }).join("") + "</ul>" +
+        '<p class="edu">' + bi(esc(f.edu.en), esc(f.edu.zh)) + "</p>" +
+        '<div class="faculty-foot">' +
+        (f.email ? '<a href="mailto:' + f.email + '"><span data-icon="mail"></span>' + esc(f.email) + "</a>" : "") +
+        (f.ext ? '<span><span data-icon="phone"></span>' + esc(f.ext) + "</span>" : "") +
+        (f.web ? '<a href="' + f.web + '" target="_blank" rel="noopener"><span data-icon="external"></span>' +
+          bi("Personal website", "個人網站") + "</a>" : "") +
+        "</div></article>";
+    }).join("");
+    paintIcons();
+  }
+
+  window.DB.listFaculty().then(function (result) {
+    var all = result.rows;
+    renderFaculty(all.filter(function (f) { return f.type === "full"; }).slice(0, 6));
+    document.getElementById("faculty-count").innerHTML =
+      bi(all.length + " faculty members teach in the program", "共 " + all.length + " 位師資參與授課");
+  });
 
   /* News: three most recent items */
   var fmt = function (d, lang) {
@@ -594,14 +612,18 @@
       '<span class="cap">' + bi(p.en, p.zh) + "<small>" + bi(p.meta.en, p.meta.zh) + "</small></span></button>";
   }).join("");
 
-  /* Icons inside the markup we just injected, and make it visible
-     (main.js set up the scroll reveal before these cards existed). */
-  document.querySelectorAll("[data-icon]").forEach(function (el) {
-    if (!el.firstChild) el.innerHTML = window.IMMBA.ICONS[el.getAttribute("data-icon")] || "";
-  });
-  requestAnimationFrame(function () {
-    document.querySelectorAll("#faculty-grid .reveal, #news-grid .reveal").forEach(function (el) { el.classList.add("in"); });
-  });
+  /* Icons inside the markup we inject, and make those cards visible
+     (main.js set up the scroll reveal before they existed). */
+  function paintIcons() {
+    document.querySelectorAll("[data-icon]").forEach(function (el) {
+      if (!el.firstChild) el.innerHTML = window.IMMBA.ICONS[el.getAttribute("data-icon")] || "";
+    });
+    requestAnimationFrame(function () {
+      document.querySelectorAll("#faculty-grid .reveal, #news-grid .reveal, #gallery .reveal")
+        .forEach(function (el) { el.classList.add("in"); });
+    });
+  }
+  paintIcons();
 })();
 </script>
 </body>

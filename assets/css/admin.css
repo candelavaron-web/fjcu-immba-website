@@ -1,0 +1,82 @@
+/* =========================================================
+   Back office (admin.html) — reuses the design tokens and
+   components from styles.css.
+   ========================================================= */
+.admin-body { background: var(--bg-soft); }
+
+.admin-header { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
+.admin-bar {
+  max-width: 1100px; margin-inline: auto; padding: 14px var(--gutter);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.admin-brand { display: flex; align-items: center; gap: 12px; color: var(--navy-800); }
+.admin-brand .brand-mark { width: 40px; height: 40px; border-radius: 11px; }
+.admin-brand span { display: flex; flex-direction: column; line-height: 1.25; }
+.admin-brand strong { font-family: var(--font-serif); font-size: 1.1rem; }
+.admin-brand small { color: var(--muted); font-size: .78rem; }
+.admin-user { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.admin-user .who { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--ink-2); }
+
+.admin-main { max-width: 1100px; margin-inline: auto; padding: clamp(24px, 4vw, 44px) var(--gutter) 80px; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px, 3vw, 32px); margin-bottom: 28px; }
+.panel h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.panel h2 { font-size: 1.25rem; font-family: var(--font-sans); font-weight: 650; }
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.auth-panel { max-width: 460px; margin-inline: auto; }
+.auth-links { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0 0; font-size: .9rem; }
+.linklike { background: none; border: 0; padding: 0; color: var(--blue-500); font: inherit; cursor: pointer; }
+.linklike:hover { color: var(--navy-800); text-decoration: underline; }
+
+.admin-main .tabs { margin-bottom: 24px; }
+
+/* Faculty list rows */
+.faculty-rows { display: flex; flex-direction: column; gap: 10px; }
+.faculty-row {
+  display: grid; grid-template-columns: 52px 1fr auto auto; gap: 14px; align-items: center;
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff;
+}
+.faculty-row.is-busy { opacity: .5; pointer-events: none; }
+.faculty-row .thumb {
+  width: 52px; height: 52px; border-radius: 50%; object-fit: cover; background: var(--blue-100);
+  display: grid; place-items: center; font-weight: 600; color: var(--navy-700); font-family: var(--font-serif);
+}
+.faculty-row .who { min-width: 0; }
+.faculty-row .who strong { display: block; color: var(--navy-800); }
+.faculty-row .who span { display: block; font-size: .86rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 34px; height: 34px; border: 1px solid var(--line-strong); background: #fff; border-radius: 8px;
+  cursor: pointer; color: var(--ink-2); font-size: .95rem; display: grid; place-items: center;
+}
+.icon-btn:hover:not(:disabled) { border-color: var(--navy-800); color: var(--navy-800); }
+.icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+.icon-btn.danger:hover { border-color: #b3261e; color: #b3261e; }
+.group-label {
+  font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  font-weight: 700; margin: 18px 0 2px;
+}
+.group-label:first-child { margin-top: 0; }
+
+/* Photo upload */
+.photo-field { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.photo-preview {
+  width: 96px; height: 96px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: var(--bg-soft); border: 1px dashed var(--line-strong);
+  display: grid; place-items: center; font-size: .72rem; color: var(--muted); text-align: center;
+}
+.photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  background: var(--navy-800); color: #fff; padding: 12px 22px; border-radius: 999px;
+  box-shadow: var(--shadow-lg); font-size: .92rem; z-index: 300; max-width: calc(100% - 32px);
+}
+.toast.error { background: #b3261e; }
+.toast[hidden] { display: none; }
+
+@media (max-width: 640px) {
+  .faculty-row { grid-template-columns: 44px 1fr; row-gap: 10px; }
+  .faculty-row .thumb { width: 44px; height: 44px; }
+  .faculty-row .row-actions { grid-column: 1 / -1; }
+}
