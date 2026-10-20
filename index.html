@@ -486,6 +486,7 @@
         <h2><span lang="en">Latest from imMBA</span><span lang="zh-Hant">國際經管近期動態</span></h2>
       </div>
       <div class="grid grid-3" id="news-grid"></div>
+      <ul class="news-list reveal" id="news-list"></ul>
       <p class="source-note reveal">
         <span lang="en">Source: announcements published on the <a href="https://www.management.fju.edu.tw/esubweb/immbaengindex/news.php" target="_blank" rel="noopener">official imMBA news page</a>.</span>
         <span lang="zh-Hant">資料來源：<a href="https://www.management.fju.edu.tw/subweb/immba/news.php" target="_blank" rel="noopener">國際經管官方網站公告</a>。</span>
@@ -627,14 +628,17 @@
       { year: "numeric", month: "short", day: "numeric" });
   }
 
-  window.DB.listNews(3).then(function (res) {
-    document.getElementById("news-grid").innerHTML = res.rows.map(function (n) {
+  window.DB.listNews(10).then(function (res) {
+    var rows = res.rows;
+
+    // the three most recent as cards
+    document.getElementById("news-grid").innerHTML = rows.slice(0, 3).map(function (n) {
       var cat = CATEGORY[n.category] || { en: n.category, zh: n.category };
       var details = n.link
         ? '<a class="link-arrow" href="' + n.link + '" target="_blank" rel="noopener">' +
             bi("View details", "查看詳情") + '<span data-icon="external"></span></a>'
         : '<span class="link-arrow muted">' + bi("Details coming soon", "詳情即將公布") + "</span>";
-      return '<article class="media-card news-card reveal">' +
+      return '<article class="media-card news-card reveal in">' +
         '<div class="media"><img src="' + n.image + '" alt="" loading="lazy"></div>' +
         '<div class="body"><div class="meta"><span class="badge">' + bi(cat.en, cat.zh) + "</span>" +
         '<time datetime="' + n.date + '">' + bi(fmtDate(n.date, "en"), fmtDate(n.date, "zh")) + "</time></div>" +
@@ -642,6 +646,17 @@
         "<p>" + bi(esc(n.summary.en), esc(n.summary.zh)) + "</p>" +
         '<div class="card-foot">' + details + "</div></div></article>";
     }).join("");
+
+    // the rest as a compact list, like the official announcements page
+    document.getElementById("news-list").innerHTML = rows.slice(3).map(function (n) {
+      var title = bi(esc(n.title.en), esc(n.title.zh));
+      var inner = '<span class="n-title">' + title + "</span>" +
+        '<time datetime="' + n.date + '">' + n.date.replace(/-/g, "/") + "</time>";
+      return "<li>" + (n.link
+        ? '<a href="' + n.link + '" target="_blank" rel="noopener">' + inner + '<span data-icon="external"></span></a>'
+        : "<span>" + inner + "</span>") + "</li>";
+    }).join("");
+
     paintIcons();
   });
 

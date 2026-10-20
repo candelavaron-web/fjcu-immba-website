@@ -750,3 +750,18 @@ img.avatar { object-fit: cover; }
 .brand-logo:focus-visible { outline-offset: 3px; }
 .brandbar .container > .brand-logo + .brand { margin-left: -2px; }
 .brandbar .container { display: flex; align-items: center; gap: 14px; }
+
+/* Compact announcement list under the cards (official page style) */
+.news-list { list-style: none; padding: 0; margin: 32px 0 0; border-top: 1px solid var(--line); }
+.news-list li { margin: 0; border-bottom: 1px solid var(--line); }
+.news-list a, .news-list > li > span {
+  display: flex; align-items: center; gap: 14px; padding: 14px 4px; color: var(--ink);
+}
+.news-list a:hover { color: var(--navy-800); background: var(--bg-soft); }
+.news-list .n-title { flex: 1; min-width: 0; font-weight: 550; }
+.news-list time { color: var(--muted); font-size: .86rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.news-list .ext-icon { opacity: .5; }
+@media (max-width: 560px) {
+  .news-list a, .news-list > li > span { flex-wrap: wrap; gap: 4px 12px; }
+  .news-list .n-title { flex-basis: 100%; }
+}
