@@ -705,11 +705,11 @@ img.avatar { object-fit: cover; }
 .teacher-group:first-child { margin-top: 0; }
 .teacher-group span { color: var(--muted); font-weight: 500; letter-spacing: .04em; }
 
-.teacher-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 2.6vw, 32px); }
+.teacher-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 .teacher {
-  display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 20px;
+  display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 26px; align-items: start;
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 22px; transition: box-shadow .25s, border-color .25s;
+  padding: 22px 26px; transition: box-shadow .25s, border-color .25s;
 }
 .teacher:hover { box-shadow: var(--shadow); border-color: var(--line-strong); }
 .teacher-photo { aspect-ratio: 3 / 4; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg-soft); }
@@ -728,7 +728,12 @@ img.avatar { object-fit: cover; }
 .t-label { color: var(--muted); font-weight: 600; font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; padding-top: 2px; }
 .t-value { color: var(--ink-2); overflow-wrap: anywhere; }
 
-@media (max-width: 980px) { .teacher-grid { grid-template-columns: 1fr; } }
+/* On wide screens the short details sit side by side so the row
+   does not become a single very long column. */
+@media (min-width: 981px) {
+  .teacher-info ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; }
+  .teacher-info li.wide { grid-column: 1 / -1; }
+}
 @media (max-width: 560px) {
   .teacher { grid-template-columns: 104px minmax(0, 1fr); gap: 16px; padding: 18px; }
   .teacher-info li { grid-template-columns: 1fr; gap: 1px; }
@@ -765,3 +770,13 @@ img.avatar { object-fit: cover; }
   .news-list a, .news-list > li > span { flex-wrap: wrap; gap: 2px 12px; }
   .news-list time { min-width: 0; flex-basis: 100%; order: -1; }
 }
+/* The program name must wrap on narrow screens instead of widening the page.
+   .brand sets flex-shrink: 0 for the header, so the branding row overrides it. */
+.brandbar .brand { flex: 1 1 auto; min-width: 0; }
+.brand-text, .brand-name { min-width: 0; }
+.brand-name { overflow-wrap: anywhere; }
+/* Grid children default to min-width:auto, so a wide table inside one of
+   them stretches the whole page. Let them shrink and scroll instead. */
+.split > *, .grid > * { min-width: 0; }
+/* Long button labels wrap on phones rather than widening the page */
+@media (max-width: 600px) { .btn { white-space: normal; text-align: center; } }

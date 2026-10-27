@@ -567,9 +567,11 @@
     var media = f.photo
       ? '<img src="' + f.photo + '" alt="' + esc(f.name) + '" loading="lazy">'
       : '<span class="no-photo" aria-hidden="true">' + esc(initials) + "</span>";
-    function line(labelEn, labelZh, valueHtml) {
+    // "wide" lines (education, specialties) span the full row on desktop
+    function line(labelEn, labelZh, valueHtml, wide) {
       if (!valueHtml) return "";
-      return '<li><span class="t-label">' + bi(labelEn, labelZh) + "</span><span class=\"t-value\">" + valueHtml + "</span></li>";
+      return '<li' + (wide ? ' class="wide"' : "") + '><span class="t-label">' + bi(labelEn, labelZh) +
+        "</span><span class=\"t-value\">" + valueHtml + "</span></li>";
     }
     return '<article class="teacher reveal">' +
       '<div class="teacher-photo">' + media + "</div>" +
@@ -577,8 +579,8 @@
         "<h3>" + esc(f.name) + (f.zh ? ' <span class="zh-name">' + esc(f.zh) + "</span>" : "") + "</h3>" +
         '<p class="teacher-title">' + bi(esc(f.title.en), esc(f.title.zh)) + "</p>" +
         "<ul>" +
-          line("Education", "學歷", bi(esc(f.edu.en), esc(f.edu.zh))) +
-          line("Specialties", "研究領域", bi(esc(f.areas.en.join(", ")), esc(f.areas.zh.join("、")))) +
+          line("Education", "學歷", bi(esc(f.edu.en), esc(f.edu.zh)), true) +
+          line("Specialties", "研究領域", bi(esc(f.areas.en.join(", ")), esc(f.areas.zh.join("、"))), true) +
           line("TEL", "聯絡電話", f.ext ? esc(f.ext) : "") +
           line("E-mail", "聯絡信箱", f.email ? '<a href="mailto:' + f.email + '">' + esc(f.email) + "</a>" : "") +
           line("Website", "個人網站", f.web ? '<a href="' + f.web + '" target="_blank" rel="noopener">' + esc(f.web.replace(/^https?:\/\//, "")) + "</a>" : "") +
