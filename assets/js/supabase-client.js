@@ -166,6 +166,58 @@
   function updateNews(id, row) { return client.from("news").update(row).eq("id", id).select().single(); }
   function deleteNews(id) { return client.from("news").delete().eq("id", id); }
 
+  /* ---------- Alumni (class #7) ---------- */
+
+  var DEGREE_PROGRAMS = ["Bachelor", "Master", "Doctoral", "Other"];
+
+  // Columns of the alumni table, in the order the brief lists them.
+  var ALUMNI_FIELDS = [
+    { key: "full_name", label: "Name", required: true },
+    { key: "student_id", label: "Student ID" },
+    { key: "department", label: "Department" },
+    { key: "degree_program", label: "Degree", options: DEGREE_PROGRAMS },
+    { key: "admission_year", label: "Admission year", number: true },
+    { key: "graduation_year", label: "Graduation year", number: true },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Phone" },
+    { key: "company", label: "Company" },
+    { key: "job_title", label: "Job title" },
+    { key: "notes", label: "Notes" }
+  ];
+
+  function listAlumni() {
+    return client.from("alumni").select("*").order("graduation_year", { ascending: false, nullsFirst: false })
+      .order("full_name", { ascending: true });
+  }
+
+  function createAlumni(row) { return client.from("alumni").insert(row).select().single(); }
+  function updateAlumni(id, row) { return client.from("alumni").update(row).eq("id", id).select().single(); }
+  function deleteAlumni(id) { return client.from("alumni").delete().eq("id", id); }
+
+  // Batch import. Inserted in chunks so one large CSV does not time out;
+  // every row still goes through the audit trigger.
+  function importAlumni(rows) {
+    var chunks = [];
+    for (var i = 0; i < rows.length; i += 100) chunks.push(rows.slice(i, i + 100));
+    var inserted = 0;
+    return chunks.reduce(function (chain, chunk) {
+      return chain.then(function () {
+        return client.from("alumni").insert(chunk).select("id").then(function (res) {
+          if (res.error) throw res.error;
+          inserted += (res.data || []).length;
+        });
+      });
+    }, Promise.resolve()).then(function () { return inserted; });
+  }
+
+  /* ---------- Audit trail ---------- */
+
+  function listAudit(limit) {
+    return client.from("audit_log").select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit || 100);
+  }
+
   /* ---------- Authentication & roles ---------- */
 
   function signUp(email, password, fullName) {
@@ -217,6 +269,14 @@
     saveOrder: saveOrder,
     uploadPhoto: uploadPhoto,
     uploadNewsImage: uploadNewsImage,
+    DEGREE_PROGRAMS: DEGREE_PROGRAMS,
+    ALUMNI_FIELDS: ALUMNI_FIELDS,
+    listAlumni: listAlumni,
+    createAlumni: createAlumni,
+    updateAlumni: updateAlumni,
+    deleteAlumni: deleteAlumni,
+    importAlumni: importAlumni,
+    listAudit: listAudit,
     newsToView: newsToView,
     listNews: listNews,
     listNewsRaw: listNewsRaw,

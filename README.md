@@ -76,6 +76,24 @@ shows an empty page.
 
 Administrator roles: `pending` → `admin` → `super_admin` (approves others).
 
+## Alumni database and audit trail (class #7)
+`supabase/alumni.sql` creates the `alumni` table (the eleven fields of the
+brief, with `degree_program` constrained to Bachelor / Master / Doctoral /
+Other) and the `audit_log` table. A database trigger writes one audit row for
+every create, update and delete, recording **who, what action, which record,
+when and exactly which fields changed** — the log is read-only, even for
+administrators.
+
+The back office adds two tabs:
+
+- **Alumni** — add, edit, delete; search across every field; filter by degree,
+  graduation year, department and company; choose which columns to display;
+  export the filtered rows as CSV; download a CSV template and import a file
+  in batches. Imports are validated first: unknown columns, missing required
+  fields, empty rows, invalid degree values, out-of-range years and duplicate
+  student IDs are reported before anything is written.
+- **Activity log** — the audit trail, filterable by action and administrator.
+
 ## Announcements (class #5)
 `supabase/news.sql` creates the `news` table, where **one record holds both
 languages** (Chinese and English title, summary and content) plus the shared

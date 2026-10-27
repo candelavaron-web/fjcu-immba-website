@@ -85,6 +85,8 @@
     <nav class="tabs" data-tabs>
       <button class="tab-btn" type="button" data-tab="tab-faculty">Faculty</button>
       <button class="tab-btn" type="button" data-tab="tab-news">Announcements</button>
+      <button class="tab-btn" type="button" data-tab="tab-alumni">Alumni</button>
+      <button class="tab-btn" type="button" data-tab="tab-audit">Activity log</button>
       <button class="tab-btn" type="button" data-tab="tab-admins" id="tab-admins-btn" hidden>Administrators</button>
     </nav>
 
@@ -227,6 +229,89 @@
           <span class="result-count" id="news-count"></span>
         </div>
         <div id="news-list" class="faculty-rows"></div>
+      </div>
+    </div>
+
+    <!-- Alumni database -->
+    <div class="tab-panel" id="tab-alumni" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="alumni-form-title">Add an alumnus</h2>
+            <p class="muted mb-0">Fields with limited values use a dropdown, so the data stays consistent.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="alumni-cancel-edit" hidden>Cancel editing</button>
+        </div>
+        <form id="alumni-form" class="form-grid"></form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Batch import</h2>
+            <p class="muted mb-0">Upload a CSV with many alumni at once. Every row is validated before anything is written.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="csv-template">Download CSV template</button>
+        </div>
+        <div class="import-row">
+          <input type="file" id="csv-file" accept=".csv,text/csv">
+          <button class="btn btn-primary btn-sm" type="button" id="csv-import" disabled>Import validated rows</button>
+        </div>
+        <div id="csv-report" class="import-report" hidden></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Alumni</h2>
+          <span class="result-count" id="alumni-count"></span>
+        </div>
+
+        <div class="filters">
+          <div class="search">
+            <span data-icon="search"></span>
+            <input type="search" id="alumni-search" placeholder="Search name, student ID, company…">
+          </div>
+          <select id="filter-degree"><option value="">All degrees</option></select>
+          <select id="filter-year"><option value="">All graduation years</option></select>
+          <select id="filter-department"><option value="">All departments</option></select>
+          <select id="filter-company"><option value="">All companies</option></select>
+          <div class="columns-picker">
+            <button class="btn btn-outline btn-sm" type="button" id="columns-btn" aria-expanded="false">Columns</button>
+            <div class="columns-menu" id="columns-menu" hidden></div>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="export-csv">Export CSV</button>
+          <button class="btn btn-outline btn-sm" type="button" id="clear-filters">Clear filters</button>
+        </div>
+
+        <div class="table-wrap">
+          <table id="alumni-table">
+            <thead><tr id="alumni-head"></tr></thead>
+            <tbody id="alumni-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit trail -->
+    <div class="tab-panel" id="tab-audit" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Activity log</h2>
+            <p class="muted mb-0">Who did what, to which record and when. Written automatically by the database and impossible to edit from here.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="audit-refresh">Refresh</button>
+        </div>
+        <div class="filters">
+          <select id="audit-action"><option value="">All actions</option><option value="CREATE">Create</option><option value="UPDATE">Update</option><option value="DELETE">Delete</option></select>
+          <select id="audit-actor"><option value="">All administrators</option></select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>When</th><th>Administrator</th><th>Action</th><th>Record</th><th>What changed</th></tr></thead>
+            <tbody id="audit-rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 

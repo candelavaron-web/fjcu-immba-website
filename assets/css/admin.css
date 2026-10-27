@@ -94,3 +94,38 @@
 .news-date { font-family: var(--font-sans) !important; font-size: .78rem !important; font-weight: 700 !important; letter-spacing: .02em; }
 @media (max-width: 860px) { .bilingual, .preview-grid { grid-template-columns: 1fr; } }
 .news-preview-thumb { width: 150px; height: 96px; border-radius: var(--radius-sm); }
+
+/* Alumni: filters, column picker, import report, audit trail */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+.filters .search { flex: 1 1 260px; }
+.filters select {
+  font: .9rem var(--font-sans); padding: 9px 12px; border: 1px solid var(--line-strong);
+  border-radius: 999px; background: #fff; color: var(--ink-2); max-width: 200px;
+}
+.filters select:focus { outline: none; border-color: var(--navy-800); }
+
+.columns-picker { position: relative; }
+.columns-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 20; min-width: 200px;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow); padding: 10px; display: grid; gap: 6px;
+}
+.columns-menu label { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-2); cursor: pointer; }
+
+#alumni-table td { white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+#alumni-table .row-actions { display: flex; gap: 6px; }
+
+.import-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.import-report { margin-top: 16px; padding: 16px 18px; border-radius: var(--radius-sm); font-size: .9rem; }
+.import-report.is-ok { background: #e3f4ea; border: 1px solid #b7e0c6; }
+.import-report.has-errors { background: #fdecea; border: 1px solid #f3c2bd; }
+.import-report p { margin: 0 0 8px; }
+.import-report ul { margin: 0 0 6px; padding-left: 20px; }
+.import-report ul.err li { color: #8c1d16; }
+.import-report ul.warn li { color: #7a5810; }
+
+ul.changes { list-style: none; margin: 0; padding: 0; font-size: .86rem; }
+ul.changes li { margin: 0 0 3px; }
+ul.changes code { background: var(--bg-soft); padding: 1px 5px; border-radius: 4px; font-size: .82em; }
+#audit-rows td { vertical-align: top; }
+#audit-rows time { font-size: .84rem; white-space: nowrap; }

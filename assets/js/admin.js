@@ -124,6 +124,8 @@
         loadNews();
         resetNewsForm();
         restoreDraft();
+        loadAlumni();
+        loadAudit();
         if (role === "super_admin") loadAdmins();
       } else {
         show("pending");
@@ -583,6 +585,463 @@
       toast(err.message || "Could not upload the image.", true);
     });
   });
+
+
+  /* =========================================================
+     Alumni database, batch import and audit trail (class #7)
+     ========================================================= */
+  var FIELDS = DB.ALUMNI_FIELDS;
+  var alumniRows = [];
+  var editingAlumni = null;
+  var validImportRows = [];
+  var DEFAULT_COLUMNS = ["full_name", "student_id", "department", "degree_program", "graduation_year", "company", "job_title"];
+  var visibleColumns = DEFAULT_COLUMNS.slice();
+  try {
+    var storedCols = JSON.parse(localStorage.getItem("immba-alumni-columns") || "null");
+    if (Array.isArray(storedCols) && storedCols.length) visibleColumns = storedCols;
+  } catch (e) { /* storage unavailable */ }
+
+  /* ---------- Form ---------- */
+  function buildAlumniForm() {
+    var form = $("alumni-form");
+    form.innerHTML = '<input type="hidden" id="a-id">' + FIELDS.map(function (f) {
+      var id = "a-" + f.key;
+      var full = f.key === "notes" ? " full" : "";
+      var input;
+      if (f.options) {
+        input = '<select id="' + id + '">' + f.options.map(function (o) {
+          return '<option value="' + o + '"' + (o === "Master" ? " selected" : "") + ">" + o + "</option>";
+        }).join("") + "</select>";
+      } else if (f.key === "notes") {
+        input = '<textarea id="' + id + '" rows="2"></textarea>';
+      } else if (f.number) {
+        input = '<input type="number" id="' + id + '" min="1950" max="2100" step="1" placeholder="2026">';
+      } else {
+        input = '<input type="' + (f.key === "email" ? "email" : "text") + '" id="' + id + '">';
+      }
+      return '<div class="field' + full + '"><label for="' + id + '">' + f.label +
+        (f.required ? " *" : "") + "</label>" + input + "</div>";
+    }).join("") +
+    '<div class="field full btn-row"><button class="btn btn-primary" type="submit" id="alumni-submit">Save alumnus</button></div>';
+  }
+
+  function resetAlumniForm() {
+    editingAlumni = null;
+    $("alumni-form").reset();
+    $("a-id").value = "";
+    $("a-degree_program").value = "Master";
+    $("alumni-form-title").textContent = "Add an alumnus";
+    $("alumni-submit").textContent = "Save alumnus";
+    $("alumni-cancel-edit").hidden = true;
+  }
+
+  function startAlumniEdit(row) {
+    editingAlumni = row.id;
+    FIELDS.forEach(function (f) { $("a-" + f.key).value = row[f.key] == null ? "" : row[f.key]; });
+    $("a-id").value = row.id;
+    $("alumni-form-title").textContent = "Editing " + row.full_name;
+    $("alumni-submit").textContent = "Save changes";
+    $("alumni-cancel-edit").hidden = false;
+    $("alumni-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function readAlumniForm() {
+    var row = {};
+    FIELDS.forEach(function (f) {
+      var value = $("a-" + f.key).value.trim();
+      row[f.key] = value === "" ? null : (f.number ? parseInt(value, 10) : value);
+    });
+    return row;
+  }
+
+  function loadAlumni() {
+    DB.listAlumni().then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      alumniRows = res.data || [];
+      buildFilters();
+      renderAlumni();
+    });
+  }
+
+  /* ---------- Search, filter, columns ---------- */
+  function uniqueValues(key) {
+    var seen = {};
+    alumniRows.forEach(function (r) { if (r[key]) seen[r[key]] = true; });
+    return Object.keys(seen).sort();
+  }
+
+  function fillSelect(id, values, keepValue) {
+    var select = $(id);
+    var current = keepValue ? select.value : "";
+    var first = select.options[0].outerHTML;
+    select.innerHTML = first + values.map(function (v) {
+      return '<option value="' + String(v).replace(/"/g, "&quot;") + '">' + esc(v) + "</option>";
+    }).join("");
+    if (current) select.value = current;
+  }
+
+  function buildFilters() {
+    fillSelect("filter-degree", DB.DEGREE_PROGRAMS, true);
+    fillSelect("filter-year", uniqueValues("graduation_year").sort().reverse(), true);
+    fillSelect("filter-department", uniqueValues("department"), true);
+    fillSelect("filter-company", uniqueValues("company"), true);
+  }
+
+  function filteredAlumni() {
+    var q = $("alumni-search").value.trim().toLowerCase();
+    var degree = $("filter-degree").value;
+    var year = $("filter-year").value;
+    var dept = $("filter-department").value;
+    var company = $("filter-company").value;
+    return alumniRows.filter(function (r) {
+      if (degree && r.degree_program !== degree) return false;
+      if (year && String(r.graduation_year) !== year) return false;
+      if (dept && r.department !== dept) return false;
+      if (company && r.company !== company) return false;
+      if (!q) return true;
+      return FIELDS.some(function (f) {
+        return String(r[f.key] == null ? "" : r[f.key]).toLowerCase().indexOf(q) !== -1;
+      });
+    });
+  }
+
+  function buildColumnsMenu() {
+    $("columns-menu").innerHTML = FIELDS.map(function (f) {
+      var on = visibleColumns.indexOf(f.key) !== -1;
+      return '<label><input type="checkbox" value="' + f.key + '"' + (on ? " checked" : "") + "> " + f.label + "</label>";
+    }).join("");
+  }
+
+  function renderAlumni() {
+    var rows = filteredAlumni();
+    var cols = FIELDS.filter(function (f) { return visibleColumns.indexOf(f.key) !== -1; });
+
+    $("alumni-head").innerHTML = cols.map(function (f) { return "<th>" + f.label + "</th>"; }).join("") +
+      "<th>Actions</th>";
+
+    $("alumni-rows").innerHTML = rows.map(function (r) {
+      return '<tr data-alumni="' + r.id + '">' + cols.map(function (f) {
+        var v = r[f.key];
+        if (f.key === "degree_program") return '<td><span class="badge gray">' + esc(v || "") + "</span></td>";
+        if (f.key === "email" && v) return '<td><a href="mailto:' + esc(v) + '">' + esc(v) + "</a></td>";
+        return "<td>" + esc(v == null ? "—" : v) + "</td>";
+      }).join("") +
+      '<td class="row-actions">' +
+        '<button class="icon-btn" type="button" data-aact="edit" title="Edit">✎</button>' +
+        '<button class="icon-btn danger" type="button" data-aact="delete" title="Delete">🗑</button>' +
+      "</td></tr>";
+    }).join("");
+
+    if (!rows.length) {
+      $("alumni-rows").innerHTML = '<tr><td colspan="' + (cols.length + 1) +
+        '"><p class="empty-state mb-0">' +
+        (alumniRows.length ? "No alumni match these filters." : "No alumni yet. Add one above or import a CSV.") +
+        "</p></td></tr>";
+    }
+
+    $("alumni-count").textContent = rows.length === alumniRows.length
+      ? alumniRows.length + " alumni"
+      : rows.length + " of " + alumniRows.length + " alumni";
+  }
+
+  /* ---------- CSV helpers ---------- */
+  // Minimal CSV parser: handles quoted fields, embedded commas and newlines.
+  function parseCSV(text) {
+    text = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n");
+    var rows = [], row = [], value = "", quoted = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (quoted) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { value += '"'; i++; } else quoted = false;
+        } else value += c;
+      } else if (c === '"') quoted = true;
+      else if (c === ",") { row.push(value); value = ""; }
+      else if (c === "\n") { row.push(value); rows.push(row); row = []; value = ""; }
+      else value += c;
+    }
+    if (value !== "" || row.length) { row.push(value); rows.push(row); }
+    return rows;
+  }
+
+  function toCSV(rows, cols) {
+    var escape = function (v) {
+      v = v == null ? "" : String(v);
+      return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    };
+    return "﻿" + [cols.map(function (c) { return escape(c.key); }).join(",")].concat(
+      rows.map(function (r) { return cols.map(function (c) { return escape(r[c.key]); }).join(","); })
+    ).join("\n");
+  }
+
+  function download(filename, content, type) {
+    var blob = new Blob([content], { type: type || "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  /* ---------- CSV validation (slide 15) ---------- */
+  function validateCSV(text) {
+    var rows = parseCSV(text);
+    var report = { errors: [], warnings: [], valid: [], total: 0 };
+    if (!rows.length) { report.errors.push("The file is empty."); return report; }
+
+    var header = rows[0].map(function (h) { return h.trim().toLowerCase(); });
+    var known = FIELDS.map(function (f) { return f.key; });
+    var unknown = header.filter(function (h) { return h && known.indexOf(h) === -1; });
+    if (unknown.length) report.errors.push("Unknown column names: " + unknown.join(", ") + ".");
+    if (header.indexOf("full_name") === -1) report.errors.push("The required column full_name is missing.");
+    if (report.errors.length) return report;
+
+    var seenIds = {};
+    alumniRows.forEach(function (r) { if (r.student_id) seenIds[r.student_id] = "already in the database"; });
+
+    rows.slice(1).forEach(function (cells, index) {
+      var line = index + 2;
+      if (cells.every(function (c) { return !c.trim(); })) { report.warnings.push("Line " + line + ": empty row, skipped."); return; }
+      report.total++;
+
+      var row = {};
+      header.forEach(function (key, i) {
+        if (!key) return;
+        var value = (cells[i] == null ? "" : cells[i]).trim();
+        row[key] = value === "" ? null : value;
+      });
+
+      if (!row.full_name) { report.errors.push("Line " + line + ": full_name is required."); return; }
+
+      if (row.degree_program) {
+        var match = DB.DEGREE_PROGRAMS.filter(function (d) {
+          return d.toLowerCase() === String(row.degree_program).trim().toLowerCase();
+        })[0];
+        if (!match) {
+          report.errors.push("Line " + line + ': invalid degree_program "' + row.degree_program +
+            '" (use ' + DB.DEGREE_PROGRAMS.join(", ") + ").");
+          return;
+        }
+        row.degree_program = match;
+      } else row.degree_program = "Master";
+
+      var badYear = false;
+      ["admission_year", "graduation_year"].forEach(function (key) {
+        if (row[key] == null) return;
+        var n = parseInt(row[key], 10);
+        if (isNaN(n) || n < 1950 || n > 2100) {
+          report.errors.push("Line " + line + ": " + key + ' must be a year between 1950 and 2100 (got "' + row[key] + '").');
+          badYear = true;
+        } else row[key] = n;
+      });
+      if (badYear) return;
+
+      if (row.email && row.email.indexOf("@") === -1) {
+        report.warnings.push("Line " + line + ': "' + row.email + '" does not look like an email address.');
+      }
+
+      if (row.student_id) {
+        if (seenIds[row.student_id]) {
+          report.errors.push("Line " + line + ": duplicate student_id " + row.student_id + " (" + seenIds[row.student_id] + ").");
+          return;
+        }
+        seenIds[row.student_id] = "earlier in this file";
+      }
+
+      report.valid.push(row);
+    });
+
+    return report;
+  }
+
+  function showReport(report) {
+    var box = $("csv-report");
+    var ok = report.valid.length && !report.errors.length;
+    box.hidden = false;
+    box.className = "import-report " + (report.errors.length ? "has-errors" : "is-ok");
+    box.innerHTML =
+      "<p><strong>" + report.valid.length + " of " + report.total + " rows are valid.</strong> " +
+      (report.errors.length ? report.errors.length + " error(s) must be fixed before importing." : "Ready to import.") + "</p>" +
+      (report.errors.length ? "<ul class=\"err\">" + report.errors.slice(0, 12).map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("") +
+        (report.errors.length > 12 ? "<li>…and " + (report.errors.length - 12) + " more</li>" : "") + "</ul>" : "") +
+      (report.warnings.length ? "<ul class=\"warn\">" + report.warnings.slice(0, 8).map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("") + "</ul>" : "");
+    validImportRows = ok ? report.valid : [];
+    $("csv-import").disabled = !ok;
+  }
+
+  /* ---------- Audit trail ---------- */
+  function renderChanges(entry) {
+    var c = entry.changes || {};
+    if (entry.action === "UPDATE") {
+      return Object.keys(c).map(function (k) {
+        var from = c[k].from == null ? "—" : String(c[k].from).replace(/^"|"$/g, "");
+        var to = c[k].to == null ? "—" : String(c[k].to).replace(/^"|"$/g, "");
+        return "<li><code>" + esc(k) + "</code> " + esc(from) + " → <strong>" + esc(to) + "</strong></li>";
+      }).join("") || "<li>—</li>";
+    }
+    var summary = ["full_name", "student_id", "degree_program", "graduation_year", "company"]
+      .filter(function (k) { return c[k]; })
+      .map(function (k) { return "<li><code>" + esc(k) + "</code> " + esc(String(c[k]).replace(/^"|"$/g, "")) + "</li>"; });
+    return summary.join("") || "<li>—</li>";
+  }
+
+  function loadAudit() {
+    DB.listAudit(200).then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      auditRows = res.data || [];
+      var actors = {};
+      auditRows.forEach(function (a) { if (a.actor_email) actors[a.actor_email] = true; });
+      fillSelect("audit-actor", Object.keys(actors).sort(), true);
+      renderAudit();
+    });
+  }
+
+  var auditRows = [];
+  function renderAudit() {
+    var action = $("audit-action").value;
+    var actor = $("audit-actor").value;
+    var rows = auditRows.filter(function (a) {
+      return (!action || a.action === action) && (!actor || a.actor_email === actor);
+    });
+    $("audit-rows").innerHTML = rows.map(function (a) {
+      var when = new Date(a.created_at);
+      var badge = a.action === "CREATE" ? "green" : a.action === "DELETE" ? "gold" : "";
+      return "<tr>" +
+        "<td><time datetime=\"" + a.created_at + "\">" + when.toLocaleDateString("en-GB") +
+          "<br><span class=\"muted\">" + when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) + "</span></time></td>" +
+        "<td>" + esc(a.actor_email || "—") + "</td>" +
+        '<td><span class="badge ' + badge + '">' + a.action + "</span></td>" +
+        "<td>" + esc(a.record_label || a.record_id || "—") + "</td>" +
+        '<td><ul class="changes">' + renderChanges(a) + "</ul></td></tr>";
+    }).join("");
+    if (!rows.length) {
+      $("audit-rows").innerHTML = '<tr><td colspan="5"><p class="empty-state mb-0">No activity recorded yet.</p></td></tr>';
+    }
+  }
+
+  /* ---------- Wiring ---------- */
+  buildAlumniForm();
+  buildColumnsMenu();
+
+  $("alumni-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var submit = $("alumni-submit");
+    submit.disabled = true;
+    var row = readAlumniForm();
+    var save = editingAlumni ? DB.updateAlumni(editingAlumni, row) : DB.createAlumni(row);
+    save.then(function (res) {
+      submit.disabled = false;
+      if (res.error) { toast(res.error.message, true); return; }
+      toast(editingAlumni ? "Changes saved." : row.full_name + " added.");
+      resetAlumniForm();
+      loadAlumni();
+      loadAudit();
+    });
+  });
+
+  $("alumni-cancel-edit").addEventListener("click", resetAlumniForm);
+
+  $("alumni-rows").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-aact]");
+    if (!btn) return;
+    var id = btn.closest("[data-alumni]").getAttribute("data-alumni");
+    var row = alumniRows.filter(function (r) { return r.id === id; })[0];
+    if (!row) return;
+    if (btn.getAttribute("data-aact") === "edit") { startAlumniEdit(row); return; }
+    if (!confirm("Delete " + row.full_name + "? The deletion is recorded in the activity log.")) return;
+    DB.deleteAlumni(id).then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      toast(row.full_name + " deleted.");
+      if (editingAlumni === id) resetAlumniForm();
+      loadAlumni();
+      loadAudit();
+    });
+  });
+
+  ["alumni-search", "filter-degree", "filter-year", "filter-department", "filter-company"].forEach(function (id) {
+    $(id).addEventListener("input", renderAlumni);
+    $(id).addEventListener("change", renderAlumni);
+  });
+
+  $("clear-filters").addEventListener("click", function () {
+    $("alumni-search").value = "";
+    ["filter-degree", "filter-year", "filter-department", "filter-company"].forEach(function (id) { $(id).value = ""; });
+    renderAlumni();
+  });
+
+  $("columns-btn").addEventListener("click", function () {
+    var open = $("columns-menu").hidden;
+    $("columns-menu").hidden = !open;
+    this.setAttribute("aria-expanded", String(open));
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".columns-picker") && !$("columns-menu").hidden) {
+      $("columns-menu").hidden = true;
+      $("columns-btn").setAttribute("aria-expanded", "false");
+    }
+  });
+
+  $("columns-menu").addEventListener("change", function () {
+    visibleColumns = [].slice.call(this.querySelectorAll("input:checked")).map(function (i) { return i.value; });
+    if (!visibleColumns.length) { visibleColumns = ["full_name"]; buildColumnsMenu(); }
+    try { localStorage.setItem("immba-alumni-columns", JSON.stringify(visibleColumns)); } catch (err) { /* ignore */ }
+    renderAlumni();
+  });
+
+  $("export-csv").addEventListener("click", function () {
+    var cols = FIELDS.filter(function (f) { return visibleColumns.indexOf(f.key) !== -1; });
+    var rows = filteredAlumni();
+    if (!rows.length) { toast("Nothing to export with these filters.", true); return; }
+    download("immba-alumni-" + new Date().toISOString().slice(0, 10) + ".csv", toCSV(rows, cols));
+    toast("Exported " + rows.length + " rows.");
+  });
+
+  $("csv-template").addEventListener("click", function () {
+    var example = {
+      full_name: "Wang Mei-Ling", student_id: "A20260015", department: "imMBA",
+      degree_program: "Master", admission_year: 2024, graduation_year: 2026,
+      email: "meiling@example.com", phone: "+886-900-000-000",
+      company: "ABC Corp", job_title: "Marketing Manager", notes: "Dual degree with KEDGE"
+    };
+    download("immba-alumni-template.csv", toCSV([example], FIELDS));
+    toast("Template downloaded.");
+  });
+
+  $("csv-file").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    $("csv-import").disabled = true;
+    validImportRows = [];
+    if (!file) { $("csv-report").hidden = true; return; }
+    var reader = new FileReader();
+    reader.onload = function () { showReport(validateCSV(String(reader.result))); };
+    reader.onerror = function () { toast("Could not read that file.", true); };
+    reader.readAsText(file, "utf-8");
+  });
+
+  $("csv-import").addEventListener("click", function () {
+    if (!validImportRows.length) return;
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Importing…";
+    DB.importAlumni(validImportRows).then(function (count) {
+      btn.textContent = "Import validated rows";
+      toast(count + " alumni imported.");
+      $("csv-file").value = "";
+      $("csv-report").hidden = true;
+      validImportRows = [];
+      loadAlumni();
+      loadAudit();
+    }).catch(function (err) {
+      btn.disabled = false;
+      btn.textContent = "Import validated rows";
+      toast(err.message || "The import failed.", true);
+    });
+  });
+
+  $("audit-refresh").addEventListener("click", loadAudit);
+  $("audit-action").addEventListener("change", renderAudit);
+  $("audit-actor").addEventListener("change", renderAudit);
 
   /* ---------------------------------------------------------
      Administrators: approve / reject (super_admin only)
