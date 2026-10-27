@@ -636,9 +636,11 @@
     // the three most recent as cards
     document.getElementById("news-grid").innerHTML = rows.slice(0, 3).map(function (n) {
       var cat = CATEGORY[n.category] || { en: n.category, zh: n.category };
+      // internal pages open in the same tab; official announcements open outside
+      var external = /^https?:\/\//i.test(n.link || "");
       var details = n.link
-        ? '<a class="link-arrow" href="' + n.link + '" target="_blank" rel="noopener">' +
-            bi("View details", "查看詳情") + '<span data-icon="external"></span></a>'
+        ? '<a class="link-arrow" href="' + n.link + '"' + (external ? ' target="_blank" rel="noopener"' : "") + ">" +
+            bi("View details", "查看詳情") + '<span data-icon="' + (external ? "external" : "arrow") + '"></span></a>'
         : '<span class="link-arrow muted">' + bi("Details coming soon", "詳情即將公布") + "</span>";
       return '<article class="media-card news-card reveal in">' +
         '<div class="media"><img src="' + n.image + '" alt="" loading="lazy"></div>' +

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What I learnt this week · FJCU imMBA</title>
+<meta name="description" content="Class notes: how the imMBA course website moved from a static page to a product managed from a cloud back office.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a2342'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%235b7fae' stroke-width='1.2'/%3E%3Cpath d='M32 7 37.5 26.5 57 32 37.5 37.5 32 57 26.5 37.5 7 32 26.5 26.5z' fill='white'/%3E%3Cpath d='M32 32 57 32l-19.5 5.5z' fill='%23d6b25e'/%3E%3Cpath d='M32 32 32 7l5.5 19.5z' fill='%23d6b25e'/%3E%3C/svg%3E">
+</head>
+<body data-page="news" data-title-en="What I learnt this week · FJCU imMBA" data-title-zh="本週學到的事 · 輔仁大學 imMBA">
+<script src="assets/js/layout.js"></script>
+
+<main id="main">
+  <article class="section">
+    <div class="container">
+      <ul class="breadcrumb breadcrumb-dark">
+        <li><a href="index.html"><span lang="en">Home</span><span lang="zh-Hant">首頁</span></a></li>
+        <li><a href="index.html#news"><span lang="en">News</span><span lang="zh-Hant">最新消息</span></a></li>
+        <li><span lang="en">What I learnt this week</span><span lang="zh-Hant">本週學到的事</span></li>
+      </ul>
+
+      <header class="article-head">
+        <div class="meta">
+          <span class="badge"><span lang="en">Student Life</span><span lang="zh-Hant">學生生活</span></span>
+          <time datetime="2026-10-20">20 Oct 2026</time>
+        </div>
+        <h1>
+          <span lang="en">What I learnt this week: from a static page to a managed product</span>
+          <span lang="zh-Hant">本週學到的事：從靜態網頁到可管理的產品</span>
+        </h1>
+        <p class="lead">
+          <span lang="en">This week our class website got a real cloud backend: a database, image storage, user accounts and a back office to manage the content.</span>
+          <span lang="zh-Hant">這週我們的課程網站有了真正的雲端後端：資料庫、圖片儲存、使用者帳號與內容管理後台。</span>
+        </p>
+      </header>
+
+      <figure class="article-cover">
+        <img src="assets/img/news/back-office.png" alt="The imMBA back office showing the faculty list with photos and the edit, delete and reorder buttons">
+        <figcaption>
+          <span lang="en">The back office where this very announcement was written: the faculty list now lives in the database, not in the code.</span>
+          <span lang="zh-Hant">撰寫這則公告的後台畫面：師資名單現在存放在資料庫，而不是程式碼裡。</span>
+        </figcaption>
+      </figure>
+
+      <div class="article-body">
+        <div lang="en">
+          <p>This week in <strong>AI-Assisted Digital Product Development</strong> we moved from a website to a manageable product.</p>
+          <p>Until now the faculty list and the announcements lived inside the code: changing a single word meant editing a file and deploying the site again. Now both live in a Supabase database, so the content can be edited from a back office and the website updates by itself.</p>
+
+          <h2>Three ideas that stayed with me</h2>
+
+          <h3>1. Authentication is not authorization</h3>
+          <p>Authentication answers “who are you?” and authorization answers “what are you allowed to do?”. My account was verified by email straight away, but I still could not manage anything: my role was <code>pending</code> until a super administrator approved it. Register → verify email → pending → review → admin.</p>
+
+          <h3>2. The key is public; the policies are what protect the data</h3>
+          <p>The publishable key travels inside the website, visible to anyone who opens the developer tools. What actually protects the data are the row level security policies in the database: faculty and announcements are readable by everyone because they appear on the public site, while the alumni records and the activity log can only be read by an administrator who is signed in.</p>
+
+          <h3>3. One record, two languages</h3>
+          <p>Each announcement holds its Chinese and English versions in the same row, so the two are created, edited and deleted together and cannot drift apart. The back office previews both side by side and warns me when one of them is still missing.</p>
+
+          <h2>What the website can do now</h2>
+          <ul>
+            <li>A faculty directory of 19 professors with their photos, edited and reordered from the back office.</li>
+            <li>Bilingual announcements, published or kept as drafts.</li>
+            <li>An alumni database with search, filters, CSV import and export.</li>
+            <li>An activity log that records who changed what, on which record and when.</li>
+            <li>Administrator accounts with three roles: pending, admin and super admin.</li>
+          </ul>
+
+          <p class="muted">Written by Candela Varón (F15381051) for the AI-Assisted Digital Product Development course at Fu Jen Catholic University.</p>
+        </div>
+
+        <div lang="zh-Hant">
+          <p>這週在 <strong>AI 輔助數位產品開發</strong> 課程中，我們把一個網站變成了可管理的產品。</p>
+          <p>在此之前，師資名單與公告都寫在程式碼裡：改一個字就要編輯檔案並重新部署。現在兩者都存放在 Supabase 資料庫，可以從後台直接編輯，網站也會自動更新。</p>
+
+          <h2>讓我印象深刻的三件事</h2>
+
+          <h3>1. 認證不等於授權</h3>
+          <p>認證回答「你是誰」，授權回答「你可以做什麼」。我的帳號馬上就通過 email 驗證，但仍然什麼都不能管理：在超級管理員核准之前，我的角色是 <code>pending</code>。註冊 → 驗證信箱 → pending → 審核 → admin。</p>
+
+          <h3>2. 金鑰是公開的，保護資料的是政策</h3>
+          <p>公開金鑰就寫在網站裡，任何人打開開發者工具都看得到。真正保護資料的是資料庫中的資料列層級安全性（RLS）政策：師資與公告任何人都能讀取，因為它們本來就顯示在公開網站上；而校友資料與活動紀錄，只有登入的管理員才能讀取。</p>
+
+          <h3>3. 一筆紀錄，兩種語言</h3>
+          <p>每則公告的中英文版本存在同一列資料中，因此建立、編輯與刪除都一起進行，兩個版本不會脫節。後台會並排預覽兩個版本，若其中一個還沒完成也會提醒我。</p>
+
+          <h2>網站現在能做到什麼</h2>
+          <ul>
+            <li>19 位教師的師資名錄，含照片，可於後台編輯與排序。</li>
+            <li>雙語公告，可選擇發布或儲存為草稿。</li>
+            <li>校友資料庫，具搜尋、篩選與 CSV 匯入匯出功能。</li>
+            <li>活動紀錄：誰在什麼時候、對哪一筆資料做了什麼變更。</li>
+            <li>三種管理員角色：pending、admin 與 super admin。</li>
+          </ul>
+
+          <p class="muted">撰文：Candela Varón（F15381051），輔仁大學 AI 輔助數位產品開發課程。</p>
+        </div>
+      </div>
+
+      <div class="article-nav">
+        <a href="index.html#news"><small><span lang="en">Back to</span><span lang="zh-Hant">返回</span></small><span lang="en">All announcements</span><span lang="zh-Hant">最新消息</span></a>
+        <a class="next" href="admin.html"><small><span lang="en">See it live</span><span lang="zh-Hant">實際操作</span></small><span lang="en">The back office</span><span lang="zh-Hant">後台管理</span></a>
+      </div>
+    </div>
+  </article>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/data/faculty.js"></script>
+<script src="assets/js/data/news.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

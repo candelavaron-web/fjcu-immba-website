@@ -58,8 +58,19 @@
       </div>
       <div class="field full" id="field-password">
         <label for="auth-password">Password</label>
-        <input type="password" id="auth-password" required autocomplete="current-password" minlength="8">
+        <div class="password-field">
+          <input type="password" id="auth-password" required autocomplete="current-password" minlength="8">
+          <button type="button" class="reveal-password" data-reveal="auth-password" aria-label="Show password" aria-pressed="false"></button>
+        </div>
         <span class="form-note" id="password-hint" hidden>At least 8 characters.</span>
+      </div>
+      <div class="field full" id="field-password-confirm" hidden>
+        <label for="auth-password-confirm">Confirm password</label>
+        <div class="password-field">
+          <input type="password" id="auth-password-confirm" autocomplete="new-password" minlength="8">
+          <button type="button" class="reveal-password" data-reveal="auth-password-confirm" aria-label="Show password" aria-pressed="false"></button>
+        </div>
+        <span class="form-note" id="password-match"></span>
       </div>
       <div class="field full">
         <button class="btn btn-primary" type="submit" id="auth-submit">Sign in</button>

@@ -129,3 +129,16 @@ ul.changes li { margin: 0 0 3px; }
 ul.changes code { background: var(--bg-soft); padding: 1px 5px; border-radius: 4px; font-size: .82em; }
 #audit-rows td { vertical-align: top; }
 #audit-rows time { font-size: .84rem; white-space: nowrap; }
+
+/* Password field with a show/hide button */
+.password-field { position: relative; display: flex; }
+.password-field input { padding-right: 46px; }
+.reveal-password {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; display: grid; place-items: center;
+  background: none; border: 0; border-radius: 8px; cursor: pointer; color: var(--muted);
+}
+.reveal-password:hover { color: var(--navy-800); background: var(--bg-soft); }
+.reveal-password svg { width: 18px; height: 18px; }
+.form-note.is-ok { color: #1e6b41; }
+.form-note.is-error { color: #b3261e; }

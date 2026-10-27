@@ -38,6 +38,35 @@
   /* ---------------------------------------------------------
      Authentication (slide 17: register, verify, login, reset)
      --------------------------------------------------------- */
+  /* Show / hide password (the eye) */
+  var EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.4 5.3A9.8 9.8 0 0 1 12 5c6.4 0 10 6 10 6a17.6 17.6 0 0 1-3.5 4.1M6.2 7.2A17.4 17.4 0 0 0 2 11s3.6 6 10 6a9.7 9.7 0 0 0 3.2-.5"/></svg>';
+
+  document.querySelectorAll("[data-reveal]").forEach(function (btn) {
+    btn.innerHTML = EYE;
+    btn.addEventListener("click", function () {
+      var input = $(btn.getAttribute("data-reveal"));
+      var show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.innerHTML = show ? EYE_OFF : EYE;
+      btn.setAttribute("aria-pressed", String(show));
+      btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      input.focus();
+    });
+  });
+
+  /* The two passwords must match before an account can be created */
+  function passwordsMatch() {
+    var a = $("auth-password").value;
+    var b = $("auth-password-confirm").value;
+    var note = $("password-match");
+    if (mode !== "signup" || !b) { note.textContent = ""; note.className = "form-note"; return !b ? false : true; }
+    var ok = a === b;
+    note.textContent = ok ? "Passwords match." : "The two passwords are different.";
+    note.className = "form-note " + (ok ? "is-ok" : "is-error");
+    return ok;
+  }
+
   var mode = "signin"; // signin | signup | reset
 
   function setMode(next) {
@@ -53,6 +82,9 @@
     $("auth-submit").textContent = isSignup ? "Create account" : isReset ? "Send reset link" : "Sign in";
     $("field-name").hidden = !isSignup;
     $("field-password").hidden = isReset;
+    $("field-password-confirm").hidden = !isSignup;
+    $("auth-password-confirm").required = isSignup;
+    $("password-match").textContent = "";
     $("auth-password").required = !isReset;
     $("auth-password").setAttribute("autocomplete", isSignup ? "new-password" : "current-password");
     $("password-hint").hidden = !isSignup;
@@ -80,6 +112,12 @@
     };
 
     if (mode === "signup") {
+      if (password !== $("auth-password-confirm").value) {
+        submit.disabled = false;
+        passwordsMatch();
+        toast("The two passwords are different.", true);
+        return;
+      }
       DB.signUp(email, password, name).then(function (res) {
         if (!done(res)) return;
         toast("Account created. Check your inbox to verify the email address.");
@@ -98,6 +136,9 @@
       });
     }
   });
+
+  $("auth-password").addEventListener("input", passwordsMatch);
+  $("auth-password-confirm").addEventListener("input", passwordsMatch);
 
   $("sign-out").addEventListener("click", function () {
     DB.signOut().then(function () { location.reload(); });
