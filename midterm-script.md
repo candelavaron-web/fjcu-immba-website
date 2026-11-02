@@ -1,107 +1,123 @@
-# Midterm — speaking script (6 minutes)
+# Midterm — "Landed" · speaking script (6 minutes)
 
-Open the deck, press **F** for fullscreen, **→** to advance.
-Total budget: 360 s. Rehearse once with a timer; the slide times below add up to 350 s.
+The midterm is a **product design review for the final project**, not the imMBA
+website we build each week. Product: **Landed — your first 30 days in Taiwan**.
+
+Open `midterm.pptx` in PowerPoint, use **Presenter View** (⌥⌘P) to read these notes
+— they are already attached to each slide. Budget: 360 s; the times below total 350 s.
 
 ---
 
 ### 1 · Title — 15 s
-"I'm Candela Varón. My product is the website of this program, the FJCU imMBA —
-rebuilt so that the program itself can run it, without a developer."
+"I'm Candela Varón. For my final project I want to build **Landed**: a guide that
+walks an arriving international student through their first 30 days in Taiwan — the
+paperwork, in order, with the real deadlines."
 
-### 2 · Product concept — 35 s
-"Today the official site keeps its content inside the code: every edit needs a
-developer, so pages age and the English and Chinese versions drift apart.
-My product is two things in one: a bilingual public site for applicants, and a
-back office where the program office edits faculty, announcements and alumni.
-The value is simple — publish in a minute, safely."
+### 2 · The problem — 40 s
+"Three things make arriving hard. The information is **scattered**: immigration, the
+university, the bank and the landlord each own one piece, nobody owns the sequence.
+A lot of it is **out of date** — the answer you find in a Facebook group is from 2023,
+in Chinese, and the office has moved. And the clock is **legal**: the ARC must be
+filed within 15 days of entry. Every international student I asked had missed, or
+nearly missed, a step."
 
-### 3 · Users & needs — 45 s
-"Three users. The **prospective student** wants three answers fast: is it in
-English, when do I apply, who teaches. The **program office** is the daily user:
-they need to publish in both languages at once and fix data without asking anyone.
-The **director** is accountable: they decide who may edit and need to know who
-changed what."
+### 3 · Product concept — 35 s
+"Landed turns that into one personalised checklist. Five questions about your
+situation generate the tasks that actually apply to you, scheduled from the day you
+land. The international office keeps the catalogue current in a back office, and
+every task shows the date it was last verified. Scope is deliberate: FJCU, from
+acceptance to day 30 — not a general life-in-Taiwan app."
 
-### 4 · Requirements — 30 s
-"From those needs: visitors browse and search; admins manage records and import
-data; super admins manage people; and the system enforces permissions and records
-every change. Four non-functional rules, and the one I care most about: the public
-site must stay up even if the backend is down."
+### 4 · Users & needs — 45 s
+"Three users. The **arriving student** lands with a visa, a suitcase and no sequence;
+they need to know what to do, in what order, with which documents. The
+**international office** answers the same ten questions every semester — they need to
+publish once, in both languages, and update when rules change. And **senior students**
+have the practical tips no official page carries, which is why contributions are a
+role, with moderation."
 
-### 5 · MVP scope — 35 s
-"Must-have is everything an applicant sees plus the tools to keep it true: the
-bilingual site, announcements, the back office with roles, faculty, alumni and the
-activity log. Nice-to-have — the application form, machine translation, an alumni
-portal — is cut not because it is hard, but because it needs other stakeholders:
-the admissions office, alumni consent."
+### 5 · Requirements — 30 s
+"Students answer an intake and tick off a dated checklist. Staff manage the catalogue
+in two languages, with deadlines, documents and dependencies. Contributors suggest
+tips. And the system turns offsets into dates, locks tasks whose prerequisite is
+unfinished, and records every content change. Non-functional: phone first — this is
+read standing in a queue."
 
-### 6 · Product structure — 30 s
-"Two surfaces over one database. The public menu deliberately mirrors the official
-site, so staff recognise where things live. The back office has five areas and is
-reached from the logo — no public link."
+### 6 · MVP scope — 35 s
+"Must-have is the loop that delivers the value: intake, dated checklist, task detail,
+tick off, plus the back office that keeps it true. Reminders, tips and a document
+wallet wait. The wallet is cut on purpose — it would store passport scans, and that
+needs a privacy review before a single line of code."
 
-### 7 · User flow — 35 s
-"The applicant journey: home → announcements → admissions → faculty → apply.
-The administrator journey is the interesting one: register, verify email, and then
-you wait. A new account is **pending** until a super admin approves it. After that,
-every edit is live on the site immediately and recorded in the log."
+### 7 · Product structure — 30 s
+"Two surfaces over one catalogue. The student app is five screens. The back office is
+where the office edits tasks, moderates tips and reads the log — that part is what
+makes this a product rather than a blog post."
 
-### 8 · UI/UX decisions — 50 s   ← the graded one, do not rush
-"Three decisions. First, one announcement holds both languages in a single record,
-and the editor previews them side by side and warns when one is missing — two
-separate posts would drift apart. Second, degree is a dropdown with four values,
-enforced again in the database: otherwise 'MBA', 'M.B.A.' and 'Master's' become
-three different groups in a filter. Third, approval before access — authentication
-answers who you are, authorization what you may do."
+### 8 · User flow — 35 s
+"The student flow is one loop: intake once, then open, do, tick, next. The staff flow
+is what keeps it alive: a rule changes, they edit both languages together, preview,
+publish — and the verification date resets, so students can see the information is
+fresh."
 
-### 9 · Faculty screen — 25 s
-"One professor per row, because applicants scan for a research field, so
-Specialties gets its own line. Filter chips instead of a search box: 19 records is
-too many to read, too few to search. And if the backend is unreachable, the page
-falls back to a bundled copy — an applicant never sees an empty page."
+### 9 · Screens — 35 s
+"Two screens carry the product. The **checklist** answers 'what now' at a glance: due
+this week, already done, and locked — the bank account is greyed out because it needs
+the ARC first, which prevents the wasted trip every student makes once. The **task
+page** answers 'what do I bring' before you queue: documents, cost, time, where, and
+the date the office last verified it."
 
-### 10 · Data design — 30 s
-"Five entities. Bilingual fields live in the same row. Alumni carry the eleven
-fields of the brief. And the audit log stores who, what, which record, when, and
-the exact field-level change — written by the database, so history cannot be
-edited from the back office."
+### 10 · UI/UX decisions — 45 s   ← the graded one, do not rush
+"Three decisions. **Five questions, not forty tasks**: the catalogue is about forty
+items and nobody needs them all — a scholarship holder has extra steps, an exchange
+student staying four months needs no ARC at all. **Choices, not free text**: programme
+and visa type are dropdowns, not for tidiness but because the rules that decide which
+tasks apply can only match clean values. And **one record, two languages**, which
+cannot be published with one side empty — otherwise the Chinese version ends up two
+years older than the English one."
 
-### 11 · System design — 25 s
-"Visitor → static site on Vercel → Supabase API. Admin → the same site, gated by
-role → Supabase → and the public site updates on the next load. The public key
-ships inside the website, so the database policies — not the interface — are what
-keep alumni and the log private."
+### 11 · Data design — 35 s
+"Five entities. Tasks carry both languages, the prerequisite, and the rule that
+decides who sees them. Deadlines are stored as **offsets**, never dates: '15 days
+after entry' becomes a real date per student, so one edit fixes the rule for
+everyone. Progress is one row per student per task, private to them. Tips wait for
+moderation. And the log records every edit."
 
-### 12 · Status & next — 25 s
-"Working today: four bilingual pages, 19 faculty with photos, 26 announcements,
-the back office with roles, CSV import and export, and the activity log. Next is
-validation: can someone from the office publish unaided, without me in the room?"
+### 12 · System design — 30 s
+"Phone-first front end, Supabase behind it for database, authentication and
+permissions, and the same back-office pattern I have been building in class — so the
+technical risk of the final project is already retired. Permissions live in the
+database: published tasks are public, a student's progress is readable only by that
+student, only staff may edit the catalogue."
 
-### 13 · Close — 10 s
-"Content belongs to the program, not to the code. The site and the back office are
-live at these addresses. Happy to take questions."
+### 13 · Next — 30 s
+"The next step is not code. It is interviewing five students who arrived this
+semester and the international office, to check the task list and its order. Then
+build the loop, then the back office, and test it with real arrivals in February —
+the only honest test is someone landing at Taoyuan with the app open. My open
+question for you: should the catalogue be owned by the office, or crowd-maintained by
+students with moderation?"
 
 ---
 
 ## Likely questions
 
-**Why not WordPress?** It solves content, but not the two things that mattered
-here: one bilingual record instead of two drifting posts, and a role system where
-the database — not the interface — enforces who can do what.
+**Isn't this just the university's website?** The university publishes pages; this
+publishes a *sequence*, personalised and dated. The information exists — what is
+missing is the order, the deadline and whether it is still true.
 
-**Is the public key a security problem?** No. It is designed to be public. Row
-level security decides what it can read: published announcements and faculty, yes;
-alumni and the audit log, only for a signed-in administrator.
+**How do you keep it accurate?** Two mechanisms: the office owns the catalogue, and
+every task carries a last-verified date, so staleness is visible rather than silent.
+Students can flag a step as out of date.
 
-**How do you prevent a bad CSV import?** Nothing is written until the file passes
-validation: unknown columns, missing names, empty rows, invalid degree values,
-out-of-range years and duplicate student IDs are listed first. The import button
-stays disabled until there are zero errors.
+**Why only FJCU?** Rules differ by university and by city office. One campus makes the
+content verifiable; the data model already allows more later.
 
-**What if someone deletes 100 alumni?** The audit log records each deletion with
-the full row, so the data can be reconstructed. Restoring from the log directly is
-on the roadmap.
+**What if a student lies on the intake?** They only hurt their own checklist — and
+they can change the answers; the checklist regenerates.
 
-**Who maintains this after the course?** That is exactly the point of the back
-office — the next person needs no code, only an approved account.
+**Why not an app in the stores?** A website works on day one, with no download, on
+whatever phone they arrive with, and updates without an app-store review.
+
+**Biggest risk?** Content, not code. Forty tasks verified in two languages is the real
+work, which is why validation with the office comes before building.
