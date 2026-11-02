@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm review · FJCU imMBA</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/deck.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a2342'/%3E%3Cpath d='M32 7 37.5 26.5 57 32 37.5 37.5 32 57 26.5 37.5 7 32 26.5 26.5z' fill='white'/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+<section class="slide dark title-slide">
+  <svg class="orbit" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-hidden="true">
+    <ellipse cx="640" cy="360" rx="620" ry="220" transform="rotate(-8 640 360)" fill="none" stroke="#2f5a8f" stroke-width="1.2"/>
+    <ellipse cx="640" cy="360" rx="440" ry="140" transform="rotate(-8 640 360)" fill="none" stroke="#c49a3a" stroke-width="1.2" stroke-dasharray="4 10"/>
+    <circle cx="120" cy="300" r="7" fill="#c49a3a"/><circle cx="1140" cy="430" r="9" fill="#2f5a8f"/>
+  </svg>
+  <p class="eyebrow">Midterm · Product design review</p>
+  <h1>A website the program<br>can actually <em class="gold">run itself</em></h1>
+  <p class="lead" style="margin-top:22px">Redesigning the FJCU imMBA site as a managed digital product</p>
+  <div class="meta-row">
+    <span>Candela Varón · F15381051</span><span class="dot"></span>
+    <span>AI-Assisted Digital Product Development</span><span class="dot"></span>
+    <span>fjcu-immba-website-gamma.vercel.app</span>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide warm">
+  <p class="eyebrow">1 · Product concept</p>
+  <h2>FJCU imMBA — bilingual site + back office</h2>
+  <div class="cols c3">
+    <div class="card"><span class="tag">Problem</span>
+      <h3>Content trapped in code</h3>
+      <p>Every change to the official site needs a developer, so pages date quickly and the English and Chinese versions drift apart.</p></div>
+    <div class="card"><span class="tag">Product</span>
+      <h3>A public site with its own admin</h3>
+      <p>One bilingual website for applicants, plus a back office where the program office edits faculty, announcements and alumni.</p></div>
+    <div class="card"><span class="tag">Value</span>
+      <h3>Publish in a minute, safely</h3>
+      <p>Staff update content without touching code; every change is attributed, reversible to inspect and protected by roles.</p></div>
+  </div>
+  <p class="small" style="margin-top:26px">Scope: the public program site and its administration — not the university-wide portal.</p>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide ">
+  <p class="eyebrow">2 · Target users &amp; needs</p>
+  <h2>Three people, three jobs to be done</h2>
+  <div class="cols c3">
+    <div class="card"><span class="badge">Primary</span>
+      <h3 style="margin-top:10px">Prospective student</h3>
+      <p class="small" style="margin-bottom:10px">International or Taiwanese, deciding where to apply</p>
+      <ul class="clean"><li>Is this taught in English, and is it accredited?</li><li>When do I apply and what do I submit?</li><li>Who teaches, and can I study abroad?</li></ul></div>
+    <div class="card"><span class="badge gold">Daily user</span>
+      <h3 style="margin-top:10px">Program office staff</h3>
+      <p class="small" style="margin-bottom:10px">Posts news, keeps faculty and alumni current</p>
+      <ul class="clean"><li>Publish an announcement in both languages at once</li><li>Fix a professor's data without a developer</li><li>Add 500 alumni without typing them one by one</li></ul></div>
+    <div class="card"><span class="badge green">Owner</span>
+      <h3 style="margin-top:10px">Program director</h3>
+      <p class="small" style="margin-bottom:10px">Accountable for what the site says</p>
+      <ul class="clean"><li>Decide who may edit the site</li><li>Know who changed what, and when</li><li>Keep applicant-facing data accurate</li></ul></div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide soft">
+  <p class="eyebrow">3 · Requirements</p>
+  <h2>What the product must do</h2>
+  <div class="split" style="margin-top:14px">
+    <div>
+      <table>
+        <thead><tr><th>Who</th><th>Key functions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Visitor</strong></td><td>Browse the program in EN / 中文 · read announcements · search and filter faculty · download forms</td></tr>
+          <tr><td><strong>Admin</strong></td><td>Create, edit, delete and reorder faculty, announcements and alumni · upload photos · import and export CSV</td></tr>
+          <tr><td><strong>Super admin</strong></td><td>Approve or reject administrators · change roles · read the activity log</td></tr>
+          <tr><td><strong>System</strong></td><td>Serve published content only · record every change · enforce permissions in the database</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="stack">
+      <div class="card"><h4>Non-functional</h4>
+        <ul class="clean" style="margin-top:10px">
+          <li>Bilingual by design, never a half-translated page</li>
+          <li>Readable on a phone — most applicants arrive from social media</li>
+          <li>Public content must survive a backend outage</li>
+          <li>Personal data (alumni) never public</li>
+        </ul></div>
+    </div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide ">
+  <p class="eyebrow">4 · MVP scope</p>
+  <h2>What ships first, and what waits</h2>
+  <div class="cols c2" style="margin-top:20px">
+    <div class="card" style="border-color:var(--gold-400)">
+      <span class="badge gold">Must have</span>
+      <ul class="clean check" style="margin-top:14px">
+        <li>Bilingual public site: program, admissions, curriculum, faculty</li>
+        <li>Announcements with date, summary and detail link</li>
+        <li>Back office with authentication and three roles</li>
+        <li>Faculty and announcement management, with photo upload</li>
+        <li>Alumni database with search, filters and CSV import</li>
+        <li>Activity log of every create, update and delete</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="badge gray">Nice to have</span>
+      <ul class="clean" style="margin-top:14px">
+        <li>Online application form and applicant tracking</li>
+        <li>Machine translation suggestions inside the editor</li>
+        <li>Alumni self-service profile updates</li>
+        <li>Dashboard with admissions and traffic figures</li>
+        <li>Scheduled publishing and an announcement archive page</li>
+      </ul>
+      <p class="small" style="margin-top:14px">Cut because they need extra stakeholders (admissions office, alumni consent) rather than extra code.</p>
+    </div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide soft">
+  <p class="eyebrow">5 · Product structure</p>
+  <h2>Two surfaces, one database</h2>
+  <div class="cols c2" style="margin-top:18px">
+    <div class="card">
+      <h3>Public site</h3>
+      <p class="small" style="margin-bottom:12px">Menu mirrors the official program site, so staff recognise it</p>
+      <table>
+        <tbody>
+          <tr><td><strong>Home</strong></td><td class="small">Hero · announcements · figures · program · faculty · downloads</td></tr>
+          <tr><td><strong>About</strong></td><td class="small">Overview &amp; ranking · learning environment</td></tr>
+          <tr><td><strong>Admissions</strong></td><td class="small">How to apply · tuition &amp; scholarships</td></tr>
+          <tr><td><strong>Curriculum</strong></td><td class="small">Courses &amp; requirements · graduation</td></tr>
+          <tr><td><strong>Article pages</strong></td><td class="small">One page per long announcement</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background:var(--navy-800);border-color:var(--navy-700)">
+      <h3 style="color:#fff">Back office <span class="small" style="color:#93a6bd">/admin</span></h3>
+      <p class="small" style="color:#a9bace;margin-bottom:12px">Reached from the logo — no public link needed</p>
+      <table>
+        <tbody style="color:#c2cfe0">
+          <tr><td><strong style="color:#fff">Faculty</strong></td><td class="small" style="color:#a9bace">CRUD · reorder · photos</td></tr>
+          <tr><td><strong style="color:#fff">Announcements</strong></td><td class="small" style="color:#a9bace">Bilingual editor · preview · draft or publish</td></tr>
+          <tr><td><strong style="color:#fff">Alumni</strong></td><td class="small" style="color:#a9bace">CRUD · search · filters · CSV in/out</td></tr>
+          <tr><td><strong style="color:#fff">Activity log</strong></td><td class="small" style="color:#a9bace">Read-only history</td></tr>
+          <tr><td><strong style="color:#fff">Administrators</strong></td><td class="small" style="color:#a9bace">Approve · reject · change roles</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide ">
+  <p class="eyebrow">5 · User flow</p>
+  <h2>The two journeys that matter</h2>
+  <h4 style="margin-top:22px;color:var(--muted);font-size:14px;letter-spacing:.1em;text-transform:uppercase">Applicant</h4>
+  <div class="flow accent" style="margin-top:10px">
+    <div class="step"><h4>Lands on home</h4><p>From Instagram or search</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Reads announcements</h4><p>Is the intake open?</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Checks admissions</h4><p>Dates, documents, fees</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Scans faculty</h4><p>Who teaches my field?</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Applies</h4><p>Apply Now → FJCU system</p></div>
+  </div>
+  <h4 style="margin-top:34px;color:var(--muted);font-size:14px;letter-spacing:.1em;text-transform:uppercase">Administrator</h4>
+  <div class="flow accent" style="margin-top:10px">
+    <div class="step"><h4>Registers</h4><p>Email + password</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Verifies email</h4><p>Role: <strong>pending</strong></p></div><div class="arrow">→</div>
+    <div class="step"><h4>Super admin approves</h4><p>Becomes <strong>admin</strong></p></div><div class="arrow">→</div>
+    <div class="step"><h4>Edits content</h4><p>Faculty · news · alumni</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Change is logged</h4><p>Site updates instantly</p></div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide soft">
+  <p class="eyebrow">6 · UI/UX design</p>
+  <h2>Three decisions worth defending</h2>
+  <div class="cols c3" style="margin-top:18px">
+    <div class="card"><span class="tag">Language</span>
+      <h3>Both languages in one record</h3>
+      <p>The editor shows English and 中文 side by side and warns when one is missing — not two posts that drift apart. One toggle for visitors; no half-translated page.</p></div>
+    <div class="card"><span class="tag">Data quality</span>
+      <h3>Dropdown, not free text</h3>
+      <p>Degree is a four-value dropdown — <em class="gold">Bachelor · Master · Doctoral · Other</em> — enforced again in the database, so "MBA", "M.B.A." and "Master's" cannot split one group into three.</p></div>
+    <div class="card"><span class="tag">Trust</span>
+      <h3>Approval before access</h3>
+      <p>A new account signs in but sees only "waiting for approval". Authentication asks <em class="gold">who are you</em>, authorization <em class="gold">what may you do</em> — only a super admin grants the second.</p></div>
+  </div>
+  <div class="cols c2" style="margin-top:20px">
+    <figure class="shot compact" style="margin:0"><img src="assets/img/deck/home.jpg" alt="Home page"><figcaption>Public site — announcements first, Apply Now always in reach</figcaption></figure>
+    <figure class="shot compact" style="margin:0"><img src="assets/img/deck/backoffice-faculty.png" alt="Back office faculty list"><figcaption>Back office — one row per record, actions on the right</figcaption></figure>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide ">
+  <p class="eyebrow">6 · UI/UX design</p>
+  <h2>Faculty: the screen applicants actually read</h2>
+  <div class="split">
+    <figure class="shot" style="margin:0"><img src="assets/img/deck/faculty.jpg" alt="Faculty list on the public site"></figure>
+    <div class="stack">
+      <div class="card"><h4>One professor per row</h4>
+        <p class="small" style="margin-top:6px">Photo left, labelled details right. Applicants scan for a research field, so <strong>Specialties</strong> gets a full line rather than being buried in a paragraph.</p></div>
+      <div class="card"><h4>Filter before scroll</h4>
+        <p class="small" style="margin-top:6px">Full-time / part-time chips at the top: 19 records is too many to read, few enough that search would be overkill.</p></div>
+      <div class="card"><h4>Degrades gracefully</h4>
+        <p class="small" style="margin-top:6px">If the backend is unreachable the page falls back to a bundled copy of the data, so an applicant never meets an empty page.</p></div>
+    </div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide warm">
+  <p class="eyebrow">7 · Data design</p>
+  <h2>Five entities</h2>
+  <div class="cols c4" style="margin-top:20px;align-items:start">
+    <div class="entity"><header>faculty</header><ul>
+      <li><b>id</b> uuid</li><li>name / name_zh</li><li>title / title_zh</li><li>education ×2</li>
+      <li>research_fields ×2</li><li>email · phone</li><li>image_url</li>
+      <li>category <span class="small">full | part</span></li><li>sort_order</li></ul></div>
+    <div class="entity"><header>news</header><ul>
+      <li><b>id</b> uuid</li><li>published_on</li><li>category</li>
+      <li>title_en / title_zh</li><li>summary ×2</li><li>body ×2</li>
+      <li>image_url · link_url</li><li>status <span class="small">draft | published</span></li></ul></div>
+    <div class="entity"><header>alumni</header><ul>
+      <li><b>id</b> uuid</li><li>full_name</li><li>student_id <span class="small">unique</span></li>
+      <li>department</li><li>degree_program <span class="small">4 values</span></li>
+      <li>admission / graduation_year</li><li>email · phone</li><li>company · job_title · notes</li></ul></div>
+    <div class="stack">
+      <div class="entity"><header class="gold">admin_profiles</header><ul>
+        <li><b>id</b> → auth user</li><li>email · full_name</li>
+        <li>role <span class="small">pending | admin | super_admin</span></li></ul></div>
+      <div class="entity"><header class="gold">audit_log</header><ul>
+        <li>actor_email <span class="small">who</span></li><li>action <span class="small">what</span></li>
+        <li>record_id <span class="small">which</span></li><li>created_at <span class="small">when</span></li>
+        <li>changes <span class="small">field: from → to</span></li></ul></div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:22px">Bilingual fields live in the same row; the audit log is written by the database itself, so history cannot be edited from the back office.</p>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide soft">
+  <p class="eyebrow">7 · System design</p>
+  <h2>How the pieces connect</h2>
+  <div class="flow" style="margin-top:26px">
+    <div class="step"><h4>Visitor</h4><p>Browser</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Public site</h4><p>Static pages on Vercel</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Supabase API</h4><p>Reads published rows</p></div>
+  </div>
+  <div class="flow" style="margin-top:16px">
+    <div class="step"><h4>Administrator</h4><p>Signs in at /admin</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Back office</h4><p>Same site, gated by role</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Supabase</h4><p>Database · storage · auth</p></div><div class="arrow">→</div>
+    <div class="step"><h4>Public site</h4><p>Updates on next load</p></div>
+  </div>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="card"><h4>Why the database enforces the rules</h4><p class="small" style="margin-top:6px">The public key ships inside the website. Row level security — not the interface — decides that alumni and the audit log stay private.</p></div>
+    <div class="card"><h4>Why static + API</h4><p class="small" style="margin-top:6px">Pages stay fast and cheap to host; only the parts that change are fetched. No server to maintain.</p></div>
+    <div class="card"><h4>Why Git deploys</h4><p class="small" style="margin-top:6px">Every change is a commit: the site can be rolled back, and content edits never require a deploy at all.</p></div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide ">
+  <p class="eyebrow">Where it stands</p>
+  <h2>Built, and what comes next</h2>
+  <div class="cols c2" style="margin-top:20px">
+    <div class="card"><span class="badge green">Working today</span>
+      <ul class="clean check" style="margin-top:14px">
+        <li>4 bilingual pages + article pages, live on Vercel</li>
+        <li>19 faculty with photos, served from the database</li>
+        <li>26 bilingual announcements, 10 on the home page</li>
+        <li>Back office: faculty, announcements, alumni, roles</li>
+        <li>CSV import with validation, export of the filtered view</li>
+        <li>Activity log recording every change</li>
+      </ul></div>
+    <div class="card"><span class="badge gold">Next</span>
+      <ul class="clean" style="margin-top:14px">
+        <li>Validate the editor with the program office: can a non-technical user publish unaided?</li>
+        <li>Announcement archive page with its own filters</li>
+        <li>Restore a deleted record from the audit log</li>
+        <li>Accessibility and performance pass before handover</li>
+      </ul>
+      <p class="small" style="margin-top:14px">Open question for the review: is CSV the right import format, or should alumni data come from the university system?</p>
+    </div>
+  </div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+
+<section class="slide dark title-slide">
+  <svg class="orbit" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-hidden="true">
+    <ellipse cx="640" cy="360" rx="560" ry="200" transform="rotate(6 640 360)" fill="none" stroke="#2f5a8f" stroke-width="1.2"/>
+    <ellipse cx="640" cy="360" rx="380" ry="120" transform="rotate(6 640 360)" fill="none" stroke="#c49a3a" stroke-width="1.2" stroke-dasharray="4 10"/>
+  </svg>
+  <h1 style="font-size:58px">Content belongs to the program,<br>not to the code.</h1>
+  <div class="cols c3" style="margin-top:40px;width:100%">
+    <div class="card"><h4 style="color:#fff">Live site</h4><p class="small" style="color:#a9bace">fjcu-immba-website-gamma.vercel.app</p></div>
+    <div class="card"><h4 style="color:#fff">Back office</h4><p class="small" style="color:#a9bace">/admin · roles and activity log</p></div>
+    <div class="card"><h4 style="color:#fff">Code</h4><p class="small" style="color:#a9bace">github.com/candelavaron-web/fjcu-immba-website</p></div>
+  </div>
+  <div class="meta-row"><span>Candela Varón · F15381051</span><span class="dot"></span><span>Questions welcome</span></div>
+<span class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#0a2342"/><circle cx="32" cy="32" r="21" fill="none" stroke="#5b7fae" stroke-width="1"/><path d="M32 9 37 27l18 5-18 5-5 18-5-18-18-5 18-5z" fill="#fff"/><path d="M32 32 55 32l-18 5z" fill="#d6b25e"/><path d="M32 32 32 9l5 18z" fill="#d6b25e"/></svg>FJCU imMBA · Midterm review</span></section>
+</div>
+<div id="counter"></div>
+<div id="hint">← → navigate · F fullscreen</div>
+<script src="assets/js/deck.js"></script>
+</body>
+</html>
