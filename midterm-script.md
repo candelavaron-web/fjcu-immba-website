@@ -1,123 +1,168 @@
-# Midterm — "Landed" · speaking script (6 minutes)
+# Midterm — "Landed" · what to say (6 minutes)
 
-The midterm is a **product design review for the final project**, not the imMBA
-website we build each week. Product: **Landed — your first 30 days in Taiwan**.
+Short sentences on purpose. Say them out loud once or twice and they will sound natural.
+The same text is in the speaker notes of the PowerPoint: open **Presenter View** (⌥⌘P).
 
-Open `midterm.pptx` in PowerPoint, use **Presenter View** (⌥⌘P) to read these notes
-— they are already attached to each slide. Budget: 360 s; the times below total 350 s.
-
----
-
-### 1 · Title — 15 s
-"I'm Candela Varón. For my final project I want to build **Landed**: a guide that
-walks an arriving international student through their first 30 days in Taiwan — the
-paperwork, in order, with the real deadlines."
-
-### 2 · The problem — 40 s
-"Three things make arriving hard. The information is **scattered**: immigration, the
-university, the bank and the landlord each own one piece, nobody owns the sequence.
-A lot of it is **out of date** — the answer you find in a Facebook group is from 2023,
-in Chinese, and the office has moved. And the clock is **legal**: the ARC must be
-filed within 15 days of entry. Every international student I asked had missed, or
-nearly missed, a step."
-
-### 3 · Product concept — 35 s
-"Landed turns that into one personalised checklist. Five questions about your
-situation generate the tasks that actually apply to you, scheduled from the day you
-land. The international office keeps the catalogue current in a back office, and
-every task shows the date it was last verified. Scope is deliberate: FJCU, from
-acceptance to day 30 — not a general life-in-Taiwan app."
-
-### 4 · Users & needs — 45 s
-"Three users. The **arriving student** lands with a visa, a suitcase and no sequence;
-they need to know what to do, in what order, with which documents. The
-**international office** answers the same ten questions every semester — they need to
-publish once, in both languages, and update when rules change. And **senior students**
-have the practical tips no official page carries, which is why contributions are a
-role, with moderation."
-
-### 5 · Requirements — 30 s
-"Students answer an intake and tick off a dated checklist. Staff manage the catalogue
-in two languages, with deadlines, documents and dependencies. Contributors suggest
-tips. And the system turns offsets into dates, locks tasks whose prerequisite is
-unfinished, and records every content change. Non-functional: phone first — this is
-read standing in a queue."
-
-### 6 · MVP scope — 35 s
-"Must-have is the loop that delivers the value: intake, dated checklist, task detail,
-tick off, plus the back office that keeps it true. Reminders, tips and a document
-wallet wait. The wallet is cut on purpose — it would store passport scans, and that
-needs a privacy review before a single line of code."
-
-### 7 · Product structure — 30 s
-"Two surfaces over one catalogue. The student app is five screens. The back office is
-where the office edits tasks, moderates tips and reads the log — that part is what
-makes this a product rather than a blog post."
-
-### 8 · User flow — 35 s
-"The student flow is one loop: intake once, then open, do, tick, next. The staff flow
-is what keeps it alive: a rule changes, they edit both languages together, preview,
-publish — and the verification date resets, so students can see the information is
-fresh."
-
-### 9 · Screens — 35 s
-"Two screens carry the product. The **checklist** answers 'what now' at a glance: due
-this week, already done, and locked — the bank account is greyed out because it needs
-the ARC first, which prevents the wasted trip every student makes once. The **task
-page** answers 'what do I bring' before you queue: documents, cost, time, where, and
-the date the office last verified it."
-
-### 10 · UI/UX decisions — 45 s   ← the graded one, do not rush
-"Three decisions. **Five questions, not forty tasks**: the catalogue is about forty
-items and nobody needs them all — a scholarship holder has extra steps, an exchange
-student staying four months needs no ARC at all. **Choices, not free text**: programme
-and visa type are dropdowns, not for tidiness but because the rules that decide which
-tasks apply can only match clean values. And **one record, two languages**, which
-cannot be published with one side empty — otherwise the Chinese version ends up two
-years older than the English one."
-
-### 11 · Data design — 35 s
-"Five entities. Tasks carry both languages, the prerequisite, and the rule that
-decides who sees them. Deadlines are stored as **offsets**, never dates: '15 days
-after entry' becomes a real date per student, so one edit fixes the rule for
-everyone. Progress is one row per student per task, private to them. Tips wait for
-moderation. And the log records every edit."
-
-### 12 · System design — 30 s
-"Phone-first front end, Supabase behind it for database, authentication and
-permissions, and the same back-office pattern I have been building in class — so the
-technical risk of the final project is already retired. Permissions live in the
-database: published tasks are public, a student's progress is readable only by that
-student, only staff may edit the catalogue."
-
-### 13 · Next — 30 s
-"The next step is not code. It is interviewing five students who arrived this
-semester and the international office, to check the task list and its order. Then
-build the loop, then the back office, and test it with real arrivals in February —
-the only honest test is someone landing at Taoyuan with the app open. My open
-question for you: should the catalogue be owned by the office, or crowd-maintained by
-students with moderation?"
+Total: 6 minutes. Slide times add up to 350 s, so you have 10 s of slack.
 
 ---
 
-## Likely questions
+## 1 · Landed — 15 s
+I'm Candela.
+My final project is called **Landed**.
+It helps international students who just arrived in Taiwan.
+One checklist for your first thirty days.
 
-**Isn't this just the university's website?** The university publishes pages; this
-publishes a *sequence*, personalised and dated. The information exists — what is
-missing is the order, the deadline and whether it is still true.
+## 2 · The problem — 40 s
+Arriving here is hard, for three reasons.
 
-**How do you keep it accurate?** Two mechanisms: the office owns the catalogue, and
-every task carries a last-verified date, so staleness is visible rather than silent.
-Students can flag a step as out of date.
+First, the information is everywhere.
+Immigration, the university, the bank.
+Nobody has the full list.
 
-**Why only FJCU?** Rules differ by university and by city office. One campus makes the
-content verifiable; the data model already allows more later.
+Second, it gets old fast.
+You find a post from 2023, in Chinese, and the office has moved.
 
-**What if a student lies on the intake?** They only hurt their own checklist — and
-they can change the answers; the checklist regenerates.
+Third, there is a legal deadline.
+The ARC must be filed in fifteen days.
+Every student I asked almost missed something.
 
-**Why not an app in the stores?** A website works on day one, with no download, on
-whatever phone they arrive with, and updates without an app-store review.
+## 3 · What it is — 35 s
+Landed turns that into one checklist.
+You answer five questions.
+You get only the tasks for your situation.
+Each task has a real date, counted from the day you land.
+The international office keeps the content updated.
+And every task shows when it was last checked.
 
-**Biggest risk?** Content, not code. Forty tasks verified in two languages is the real
-work, which is why validation with the office comes before building.
+## 4 · Users — 45 s
+Three users.
+
+The **student** arrives with a visa and no plan.
+They need to know what to do, and when.
+
+The **office** answers the same questions every semester.
+They need to publish once, in two languages.
+
+And **senior students** know the tricks.
+So they can add tips — but someone approves them first.
+
+## 5 · Requirements — 30 s
+Students answer the questions and tick off tasks.
+Staff write the tasks in English and Chinese.
+Senior students suggest tips.
+
+The system does three things.
+It calculates your dates.
+It locks the tasks you cannot do yet.
+And it saves every change.
+
+One more rule: it must work well on a phone.
+You read this standing in a queue.
+
+## 6 · MVP — 35 s
+The must-have part is the loop.
+Questions, checklist, task, tick, next.
+Plus the back office.
+
+Reminders and tips can wait.
+I also cut the document wallet.
+It would store passport scans.
+That needs a privacy review first.
+
+## 7 · Structure — 30 s
+Two parts, one database.
+The student app has five screens.
+The back office is for the office staff.
+That is the part that keeps everything true.
+
+## 8 · Flows — 35 s
+The student flow is a loop.
+Answer once. Then open, do, tick, next.
+
+The staff flow keeps it alive.
+A rule changes, they edit both languages, they publish.
+And the verified date starts again.
+
+## 9 · Screens — 35 s
+Two screens.
+
+The checklist tells you what to do now.
+Due this week, already done, and locked.
+The bank account is grey, because you need the ARC first.
+That saves you a wasted trip.
+
+The task page tells you what to bring, before you go.
+
+## 10 · Design decisions — 45 s  ← the important one, go slow
+Three decisions I want to explain.
+
+First: five questions, not forty tasks.
+Nobody needs all of them.
+
+Second: dropdowns, not free text.
+The rules can only match clean values.
+
+Third: one record with both languages.
+You cannot publish with one side empty.
+If you use two pages, the Chinese one gets old.
+
+## 11 · Data — 35 s
+Five tables.
+Tasks have both languages, and the rule that decides who sees them.
+Deadlines are saved as offsets, not dates.
+"Fifteen days after entry" becomes your real date.
+Progress is private to each student.
+Tips wait for approval.
+And the log saves every change.
+
+## 12 · System — 30 s
+The app runs on the phone.
+The database is Supabase.
+The rules live in the database, not in the screen.
+Published tasks are public.
+Your progress is only yours.
+Only staff can edit.
+And this is the same stack I use in class.
+So the technical risk is already solved.
+
+## 13 · Next — 30 s
+My next step is not code.
+First I talk to five students who arrived this semester, and to the office.
+Is the list right? Is the order right?
+Then I build the loop, then the back office.
+And I test it in February, with students who are really arriving.
+
+My question for you: who should own the content?
+The office, or the students?
+
+---
+
+## If they ask
+
+**Isn't this the university website?**
+The website has pages. This has a sequence.
+Personal, with dates, and you can see if it is still true.
+
+**How do you keep it correct?**
+The office owns the content.
+Every task shows the last date it was checked.
+And students can report a step that is wrong.
+
+**Why only Fu Jen?**
+The rules change by university and by city office.
+One campus first, so I can verify everything.
+The database already allows more later.
+
+**What if a student answers wrong?**
+Only their own checklist changes.
+They can answer again and it regenerates.
+
+**Why not a mobile app?**
+A website works on day one.
+No download, any phone, and I can update it the same day.
+
+**What is the biggest risk?**
+The content, not the code.
+Forty tasks, in two languages, verified.
+That is why I talk to the office before I build.
