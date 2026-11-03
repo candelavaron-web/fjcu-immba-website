@@ -25,7 +25,10 @@ You find a post from 2023, in Chinese, and the office has moved.
 
 Third, there is a legal deadline.
 The ARC must be filed in fifteen days.
-Every student I asked almost missed something.
+
+Right now students use three things.
+A PDF from the office. An old Facebook post. Or a friend who did it last year.
+None of them knows your dates.
 
 ## 3 · What it is — 35 s
 Landed turns that into one checklist.
@@ -34,6 +37,9 @@ You get only the tasks for your situation.
 Each task has a real date, counted from the day you land.
 The international office keeps the content updated.
 And every task shows when it was last checked.
+
+The information already exists.
+What does not exist is the order, the dates and the trust.
 
 ## 4 · Users — 45 s
 Three users.
@@ -143,6 +149,12 @@ The office, or the students?
 **Isn't this the university website?**
 The website has pages. This has a sequence.
 Personal, with dates, and you can see if it is still true.
+
+**Can't ChatGPT tell me all this?**
+It can, and it will sound right.
+But it does not know today's fee, it does not know your arrival date,
+and nobody is responsible if it is wrong.
+My product shows who verified each step, and when.
 
 **How do you keep it correct?**
 The office owns the content.
