@@ -1,7 +1,7 @@
 # Midterm — "Landed" · what to say (6 minutes)
 
 Short sentences on purpose. Say them out loud once or twice and they will sound natural.
-The same text is in the speaker notes of the PowerPoint: open **Presenter View** (⌥⌘P).
+The same text is in the speaker notes of the PowerPoint: open **Presenter View** (Option + Cmd + P).
 
 Total: 6 minutes. Slide times add up to 350 s, so you have 10 s of slack.
 
