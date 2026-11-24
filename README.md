@@ -18,6 +18,7 @@ index.html              Home page (every section of the menu)
 about.html              Overview & Ranking · Our Learning Environment
 admissions.html         How to apply · Tuition & Scholarships
 curriculum.html         Courses & Requirements · Graduation
+marketplace.html        Student marketplace: browse, cart, my orders, my shop
 assets/css/styles.css   Design system: tokens, components, responsive rules
 assets/js/layout.js     Notice bar + header/nav + footer (edit the menu here, once)
 assets/js/main.js       Language switch, mobile menu, dropdowns, reveal, lightbox
@@ -63,9 +64,11 @@ Faculty data, photos and administrators live in **Supabase**:
 
 ```
 supabase/schema.sql      tables, roles, row level security, storage bucket
+supabase/marketplace.sql products, orders, the order state machine, seller roles
 supabase/seed.sql        the 19 faculty members of the program
 supabase/README.md       step-by-step setup
-admin.html               back office: sign in, faculty CRUD, reorder, photos
+admin.html               back office: faculty, news, alumni, transactions, admins
+assets/js/marketplace.js the marketplace: browsing, cart, orders, seller tools
 assets/js/supabase-*.js  connection details and the data API
 scripts/build-config.sh  writes the config from Vercel environment variables
 ```

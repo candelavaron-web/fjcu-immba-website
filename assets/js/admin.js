@@ -166,6 +166,7 @@
         resetNewsForm();
         restoreDraft();
         loadAlumni();
+        loadMarket();
         loadAudit();
         if (role === "super_admin") loadAdmins();
       } else {
@@ -1147,6 +1148,172 @@
     });
   }
 
+  /* ---------------------------------------------------------
+     Marketplace: platform administration (class #10)
+     The administrator sees every transaction and decides who may
+     sell — but cannot touch an order. rpc_advance_order only
+     accepts the buyer or the seller of that order, so this screen
+     is read-only by construction, not by hiding buttons.
+     --------------------------------------------------------- */
+  var marketOrders = [];
+  var sellerRows = [];
+  var productCounts = {};
+
+  function money(n) { return "NT$" + Number(n || 0).toLocaleString("en-US", { maximumFractionDigits: 0 }); }
+
+  function whenISO(iso) {
+    if (!iso) return "—";
+    return new Date(iso).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+
+  // An order nobody moved on: still unpaid after three days, or
+  // delivered a week ago and never confirmed.
+  function isStuck(o) {
+    var days = function (iso) { return (Date.now() - new Date(iso).getTime()) / 86400000; };
+    if (o.status === "awaiting_payment" && days(o.created_at) > 3) return true;
+    if (o.status === "shipped" && o.shipped_at && days(o.shipped_at) > 7) return true;
+    return false;
+  }
+
+  function loadMarket() {
+    DB.allOrders().then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      marketOrders = res.data || [];
+      renderMarket();
+    });
+
+    DB.listSellers().then(function (res) {
+      if (res.error) { toast(res.error.message, true); return; }
+      sellerRows = res.data || [];
+      renderSellers();
+    });
+
+    DB.client.from("products").select("seller_id").then(function (res) {
+      productCounts = {};
+      (res.data || []).forEach(function (p) { productCounts[p.seller_id] = (productCounts[p.seller_id] || 0) + 1; });
+      renderSellers();
+    });
+  }
+
+  function filteredOrders() {
+    var q = ($("market-search").value || "").trim().toLowerCase();
+    var status = $("market-status").value;
+    var stuckOnly = $("market-stuck").checked;
+    return marketOrders.filter(function (o) {
+      if (status && o.status !== status) return false;
+      if (stuckOnly && !isStuck(o)) return false;
+      if (!q) return true;
+      var hay = [o.order_no, o.buyer_name, o.buyer_email, o.seller_name, o.seller_shop]
+        .concat((o.order_items || []).map(function (i) { return i.product_name; }))
+        .join(" ").toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  function renderMarket() {
+    var rows = filteredOrders();
+    var completed = marketOrders.filter(function (o) { return o.status === "completed"; });
+    var gmv = completed.reduce(function (s, o) { return s + Number(o.total); }, 0);
+    var stuck = marketOrders.filter(isStuck);
+
+    $("market-stats").innerHTML = [
+      [marketOrders.length, "Transactions"],
+      [completed.length, "Completed"],
+      [money(gmv), "Value completed"],
+      [stuck.length, "Orders that got stuck"]
+    ].map(function (p) {
+      return '<div class="stat"><span class="stat-num">' + p[0] + '</span><span class="stat-label">' + p[1] + "</span></div>";
+    }).join("");
+
+    $("market-count").textContent = rows.length === marketOrders.length
+      ? marketOrders.length + " transactions"
+      : rows.length + " of " + marketOrders.length + " transactions";
+
+    $("market-rows").innerHTML = rows.length ? rows.map(function (o) {
+      var s = DB.statusInfo(o.status);
+      return '<tr class="' + (isStuck(o) ? "is-stuck" : "") + '">' +
+        "<td><strong>" + esc(o.order_no) + "</strong>" + (isStuck(o) ? ' <span class="badge gold">stuck</span>' : "") + "</td>" +
+        "<td>" + whenISO(o.created_at) + "</td>" +
+        "<td>" + esc(o.buyer_name || "—") + "<br><small class=\"muted\">" + esc(o.buyer_email || "") + "</small></td>" +
+        "<td>" + esc(o.seller_shop || o.seller_name || "—") + "</td>" +
+        "<td>" + (o.order_items || []).map(function (i) { return esc(i.product_name) + " ×" + i.quantity; }).join("<br>") + "</td>" +
+        "<td>" + money(o.total) + "</td>" +
+        '<td><span class="badge ' + s.tone + '">' + s.en + "</span></td></tr>";
+    }).join("") : '<tr><td colspan="7"><p class="empty-state">No transactions yet.</p></td></tr>';
+  }
+
+  function renderSellers() {
+    var salesBySeller = {};
+    marketOrders.forEach(function (o) {
+      if (o.status !== "completed") return;
+      salesBySeller[o.seller_id] = (salesBySeller[o.seller_id] || 0) + Number(o.total);
+    });
+
+    $("sellers-rows").innerHTML = sellerRows.length ? sellerRows.map(function (s) {
+      var tone = s.seller_status === "approved" ? "green" : s.seller_status === "pending" ? "gold" : "gray";
+      var actions = "";
+      if (s.seller_status === "pending" || s.seller_status === "suspended" || s.seller_status === "none") {
+        actions += '<button class="btn btn-primary btn-sm" type="button" data-approve="' + s.id + '">Approve</button>';
+      }
+      if (s.seller_status === "approved") {
+        actions += '<button class="btn btn-outline btn-sm" type="button" data-suspend="' + s.id + '">Suspend</button>';
+      }
+      return "<tr>" +
+        "<td>" + esc(s.display_name || "—") + "<br><small class=\"muted\">" + esc(s.email) + "</small></td>" +
+        "<td>" + esc(s.shop_name || "—") + "</td>" +
+        '<td><span class="badge ' + tone + '">' + s.seller_status + "</span></td>" +
+        "<td>" + (productCounts[s.id] || 0) + "</td>" +
+        "<td>" + money(salesBySeller[s.id] || 0) + "</td>" +
+        '<td class="row-actions">' + actions + "</td></tr>";
+    }).join("") : '<tr><td colspan="6"><p class="empty-state">Nobody has registered yet.</p></td></tr>';
+
+    $("sellers-rows").querySelectorAll("[data-approve], [data-suspend]").forEach(function (btn) {
+      var approve = btn.hasAttribute("data-approve");
+      var id = btn.getAttribute(approve ? "data-approve" : "data-suspend");
+      btn.addEventListener("click", function () {
+        if (!approve && !confirm("Suspend this shop? Their listings stop being visible, but every past order is kept.")) return;
+        btn.disabled = true;
+        DB.setSellerStatus(id, approve ? "approved" : "suspended").then(function (res) {
+          toast(res.error ? res.error.message : approve ? "Seller approved." : "Seller suspended.", Boolean(res.error));
+          loadMarket();
+        });
+      });
+    });
+  }
+
+  function initMarketControls() {
+    $("market-status").innerHTML = '<option value="">All statuses</option>' +
+      DB.ORDER_STATUS.map(function (s) { return '<option value="' + s.key + '">' + s.en + "</option>"; }).join("");
+    $("market-search").addEventListener("input", renderMarket);
+    $("market-status").addEventListener("change", renderMarket);
+    $("market-stuck").addEventListener("change", renderMarket);
+    $("market-refresh").addEventListener("click", loadMarket);
+    $("market-export").addEventListener("click", function () {
+      var rows = filteredOrders().map(function (o) {
+        return {
+          order_no: o.order_no,
+          created_at: o.created_at,
+          buyer: o.buyer_name || "",
+          buyer_email: o.buyer_email || "",
+          seller: o.seller_shop || o.seller_name || "",
+          items: (o.order_items || []).map(function (i) { return i.product_name + " x" + i.quantity; }).join(" | "),
+          amount_ntd: Number(o.total),
+          status: DB.statusInfo(o.status).en,
+          paid_at: o.paid_at || "",
+          shipped_at: o.shipped_at || "",
+          completed_at: o.completed_at || "",
+          flagged: isStuck(o) ? "stuck" : ""
+        };
+      });
+      if (!rows.length) { toast("Nothing to export.", true); return; }
+      var cols = ["order_no", "created_at", "buyer", "buyer_email", "seller", "items",
+                  "amount_ntd", "status", "paid_at", "shipped_at", "completed_at", "flagged"]
+        .map(function (k) { return { key: k }; });
+      download("immba-transactions-" + new Date().toISOString().slice(0, 10) + ".csv", toCSV(rows, cols));
+      toast(rows.length + " transactions exported.");
+    });
+  }
+
   /* ---------- Tabs ---------- */
   document.querySelectorAll("[data-tabs] .tab-btn").forEach(function (btn, _, all) {
     btn.addEventListener("click", function () {
@@ -1160,5 +1327,6 @@
   var firstTab = document.querySelector("[data-tabs] .tab-btn");
   if (firstTab) firstTab.setAttribute("aria-selected", "true");
 
+  initMarketControls();
   setMode("signin");
 })();

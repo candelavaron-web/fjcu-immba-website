@@ -78,6 +78,7 @@
     { id: "exchange", en: "Exchange", zh: "海外交換", href: "index.html#exchange" },
     { id: "highlights", en: "Highlights", zh: "活動集錦", href: "index.html#highlights" },
     { id: "news", en: "News", zh: "公告", href: "index.html#news" },
+    { id: "market", en: "Marketplace", zh: "二手交易", href: "marketplace.html" },
     { id: "download", en: "Download", zh: "表格下載", href: "index.html#resources" }
   ];
 
@@ -196,6 +197,7 @@
       "<div><h4>" + bi("Resources", "資源") + "</h4><ul>" +
         '<li><a href="admissions.html">' + bi("Admissions", "招生資訊") + "</a></li>" +
         '<li><a href="index.html#resources">' + bi("Forms & Downloads", "表格下載") + "</a></li>" +
+        '<li><a href="marketplace.html">' + bi("Student Marketplace", "學生二手交易") + "</a></li>" +
         '<li><a href="' + EXTERNAL.isc + '" target="_blank" rel="noopener">' + bi("International Student Center", "國際學生中心") + "</a></li>" +
         '<li><a href="' + EXTERNAL.library + '" target="_blank" rel="noopener">' + bi("FJCU Library", "輔大圖書館") + "</a></li>" +
         '<li><a href="' + EXTERNAL.college + '" target="_blank" rel="noopener">' + bi("College of Management", "管理學院") + "</a></li>" +

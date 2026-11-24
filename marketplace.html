@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Marketplace — FJCU imMBA</title>
+<meta name="description" content="The imMBA student marketplace: buy and sell textbooks, electronics and dorm essentials inside the program. Buyers, sellers and the platform administrator each see their own view of the same transaction.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/marketplace.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a2342'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%235b7fae' stroke-width='1.2'/%3E%3Cpath d='M32 7 37.5 26.5 57 32 37.5 37.5 32 57 26.5 37.5 7 32 26.5 26.5z' fill='white'/%3E%3Cpath d='M32 32 57 32l-19.5 5.5z' fill='%23d6b25e'/%3E%3Cpath d='M32 32 32 7l5.5 19.5z' fill='%23d6b25e'/%3E%3C/svg%3E">
+</head>
+<body data-page="market" data-title-en="Student Marketplace — FJCU imMBA" data-title-zh="學生二手交易平台 — 輔仁大學 imMBA">
+<script src="assets/js/layout.js"></script>
+
+<main id="main">
+
+  <!-- ============ PAGE HERO ============ -->
+  <section class="page-hero page-hero-market">
+    <div class="container">
+      <ul class="breadcrumb">
+        <li><a href="index.html"><span lang="en">Home</span><span lang="zh-Hant">首頁</span></a></li>
+        <li><span lang="en">Marketplace</span><span lang="zh-Hant">二手交易</span></li>
+      </ul>
+      <h1><span lang="en">Student Marketplace</span><span lang="zh-Hant">學生二手交易平台</span></h1>
+      <p class="lead">
+        <span lang="en">Textbooks, calculators, bicycles and dorm essentials, passed from one imMBA cohort to the next. Everyone in the program can buy; approved students can also sell.</span>
+        <span lang="zh-Hant">教科書、計算機、自行車與宿舍用品，在 imMBA 學長姐與學弟妹之間流轉。學程成員皆可購買，經核可的同學也能開店販售。</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ WHO YOU ARE RIGHT NOW ============ -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="mk-account" id="mk-account"></div>
+    </div>
+  </section>
+
+  <div class="container">
+    <nav class="tabs" data-tabs id="mk-tabs">
+      <button class="tab-btn" type="button" data-tab="tab-browse">
+        <span lang="en">Browse</span><span lang="zh-Hant">瀏覽商品</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="tab-orders" id="btn-orders" hidden>
+        <span lang="en">My orders</span><span lang="zh-Hant">我的訂單</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="tab-shop" id="btn-shop" hidden>
+        <span lang="en">My shop</span><span lang="zh-Hant">我的商店</span>
+      </button>
+      <button class="tab-btn" type="button" data-tab="tab-roles">
+        <span lang="en">Who can do what</span><span lang="zh-Hant">角色與權限</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ============ BROWSE (every visitor) ============ -->
+  <section class="section-sm tab-panel" id="tab-browse">
+    <div class="container">
+      <div class="mk-toolbar">
+        <div class="search">
+          <span data-icon="search"></span>
+          <label class="visually-hidden" for="mk-search">Search the marketplace</label>
+          <input type="search" id="mk-search" placeholder="Search books, electronics, bikes…"
+                 data-ph-en="Search books, electronics, bikes…" data-ph-zh="搜尋書籍、電子產品、自行車…">
+        </div>
+        <select id="mk-sort" aria-label="Sort listings"
+                data-opt-en="Newest first|Price: low to high|Price: high to low"
+                data-opt-zh="最新上架|價格由低到高|價格由高到低">
+          <option value="new">Newest first</option>
+          <option value="cheap">Price: low to high</option>
+          <option value="dear">Price: high to low</option>
+        </select>
+        <button class="btn btn-outline btn-sm" type="button" id="mk-cart-open">
+          <span data-icon="coin"></span>
+          <span lang="en">Cart</span><span lang="zh-Hant">購物車</span>
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+      </div>
+
+      <div class="chips" id="mk-categories"></div>
+
+      <p class="result-count" id="mk-count"></p>
+      <div class="product-grid" id="product-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ MY ORDERS (buyer) ============ -->
+  <section class="section-sm tab-panel" id="tab-orders" hidden>
+    <div class="container">
+      <div class="mk-panel">
+        <div class="panel-head">
+          <div>
+            <h2><span lang="en">My orders</span><span lang="zh-Hant">我的訂單</span></h2>
+            <p class="muted mb-0">
+              <span lang="en">Your side of the transaction: what you ordered, what the seller still has to do, and your purchase history. Nothing is ever deleted.</span>
+              <span lang="zh-Hant">這是交易的買方視角：你下了什麼訂單、賣方還要做什麼，以及完整的購買紀錄。所有紀錄都不會被刪除。</span>
+            </p>
+          </div>
+          <button class="btn btn-outline btn-sm" type="button" id="orders-refresh">
+            <span lang="en">Refresh</span><span lang="zh-Hant">重新載入</span>
+          </button>
+        </div>
+        <div class="stats mk-stats" id="buyer-stats"></div>
+        <div class="order-list" id="purchase-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MY SHOP (seller) ============ -->
+  <section class="section-sm tab-panel" id="tab-shop" hidden>
+    <div class="container">
+
+      <!-- not a seller yet -->
+      <div class="mk-panel" id="seller-gate" hidden>
+        <h2><span lang="en">Open your shop</span><span lang="zh-Hant">開設你的商店</span></h2>
+        <p class="muted">
+          <span lang="en">Selling needs one extra step: the platform administrator approves the shop first. Buying works straight away.</span>
+          <span lang="zh-Hant">販售需要多一道步驟：平台管理者核可後才能上架商品，購買則不需要。</span>
+        </p>
+        <form class="form-grid" id="seller-request-form">
+          <div class="field full">
+            <label for="shop-name"><span lang="en">Shop name</span><span lang="zh-Hant">商店名稱</span></label>
+            <input type="text" id="shop-name" required maxlength="60" placeholder="e.g. Candela's corner">
+            <span class="form-note"><span lang="en">This is the name buyers will see on their orders.</span><span lang="zh-Hant">買家在訂單上會看到這個名稱。</span></span>
+          </div>
+          <div class="field full">
+            <button class="btn btn-primary" type="submit"><span lang="en">Request approval</span><span lang="zh-Hant">送出申請</span></button>
+          </div>
+        </form>
+        <p class="mk-pending" id="seller-pending" hidden>
+          <span lang="en">Your request is <strong>pending</strong>. The platform administrator will approve it from the back office.</span>
+          <span lang="zh-Hant">你的申請正在<strong>審核中</strong>，平台管理者將於後台核可。</span>
+        </p>
+      </div>
+
+      <!-- approved seller -->
+      <div id="seller-area" hidden>
+
+        <!-- Accounting overview (slide 15) -->
+        <div class="mk-panel">
+          <div class="panel-head">
+            <div>
+              <h2><span lang="en">Sales overview</span><span lang="zh-Hant">銷售總覽</span></h2>
+              <p class="muted mb-0" id="shop-label"></p>
+            </div>
+            <button class="btn btn-outline btn-sm" type="button" id="sales-export">
+              <span lang="en">Export sales CSV</span><span lang="zh-Hant">匯出銷售 CSV</span>
+            </button>
+          </div>
+          <div class="stats mk-stats" id="seller-stats"></div>
+        </div>
+
+        <!-- Orders to handle (slide 10–11) -->
+        <div class="mk-panel">
+          <div class="panel-head">
+            <div>
+              <h2><span lang="en">Orders to handle</span><span lang="zh-Hant">待處理訂單</span></h2>
+              <p class="muted mb-0">
+                <span lang="en">Confirm the payment, then confirm the shipment. Each step is checked by the database, so no step can be skipped.</span>
+                <span lang="zh-Hant">先確認收款，再確認出貨。每一步都由資料庫驗證，無法跳過。</span>
+              </p>
+            </div>
+          </div>
+          <div class="order-list" id="sales-open"></div>
+        </div>
+
+        <!-- Listing form (slide 6) -->
+        <div class="mk-panel">
+          <div class="panel-head">
+            <div>
+              <h2 id="product-form-title"><span lang="en">List a product</span><span lang="zh-Hant">上架商品</span></h2>
+              <p class="muted mb-0">
+                <span lang="en">Name, category, description, price, quantity, photo and listing status.</span>
+                <span lang="zh-Hant">商品名稱、分類、說明、價格、數量、照片與上架狀態。</span>
+              </p>
+            </div>
+            <button class="btn btn-outline btn-sm" type="button" id="product-cancel-edit" hidden>
+              <span lang="en">Cancel editing</span><span lang="zh-Hant">取消編輯</span>
+            </button>
+          </div>
+          <form class="form-grid" id="product-form">
+            <div class="field full">
+              <label for="p-name"><span lang="en">Product name</span><span lang="zh-Hant">商品名稱</span></label>
+              <input type="text" id="p-name" required maxlength="120">
+            </div>
+            <div class="field">
+              <label for="p-category"><span lang="en">Category</span><span lang="zh-Hant">分類</span></label>
+              <select id="p-category"></select>
+            </div>
+            <div class="field">
+              <label for="p-status"><span lang="en">Listing status</span><span lang="zh-Hant">上架狀態</span></label>
+              <select id="p-status"></select>
+            </div>
+            <div class="field">
+              <label for="p-price"><span lang="en">Price (NT$)</span><span lang="zh-Hant">價格（新台幣）</span></label>
+              <input type="number" id="p-price" min="0" step="1" required>
+            </div>
+            <div class="field">
+              <label for="p-quantity"><span lang="en">Quantity in stock</span><span lang="zh-Hant">庫存數量</span></label>
+              <input type="number" id="p-quantity" min="0" step="1" value="1" required>
+            </div>
+            <div class="field full">
+              <label for="p-description"><span lang="en">Description</span><span lang="zh-Hant">商品說明</span></label>
+              <textarea id="p-description" rows="4" placeholder="Condition, where to pick it up, what is included…"></textarea>
+            </div>
+            <div class="field full">
+              <label for="p-image"><span lang="en">Photo</span><span lang="zh-Hant">商品照片</span></label>
+              <div class="photo-field">
+                <div class="photo-preview" id="p-image-preview"></div>
+                <div>
+                  <input type="file" id="p-image" accept="image/*">
+                  <span class="form-note"><span lang="en">Optional. Stored in Supabase Storage; without a photo the card shows the category icon.</span><span lang="zh-Hant">選填。照片存於 Supabase Storage；未上傳時卡片顯示分類圖示。</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <button class="btn btn-primary" type="submit" id="product-submit"><span lang="en">Publish listing</span><span lang="zh-Hant">發佈商品</span></button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Inventory (slide 7) -->
+        <div class="mk-panel">
+          <div class="panel-head">
+            <div>
+              <h2><span lang="en">My inventory</span><span lang="zh-Hant">我的庫存</span></h2>
+              <p class="muted mb-0">
+                <span lang="en">Available stock is what is left after the purchases: it goes down with every order and comes back if an order is cancelled.</span>
+                <span lang="zh-Hant">可售庫存＝原有庫存－已售出數量：每筆訂單會扣減，訂單取消時會回補。</span>
+              </p>
+            </div>
+            <span class="result-count" id="inventory-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="mk-table">
+              <thead><tr>
+                <th><span lang="en">Product</span><span lang="zh-Hant">商品</span></th>
+                <th><span lang="en">Price</span><span lang="zh-Hant">價格</span></th>
+                <th><span lang="en">Stock</span><span lang="zh-Hant">庫存</span></th>
+                <th><span lang="en">Sold</span><span lang="zh-Hant">已售出</span></th>
+                <th><span lang="en">Status</span><span lang="zh-Hant">狀態</span></th>
+                <th><span lang="en">Actions</span><span lang="zh-Hant">操作</span></th>
+              </tr></thead>
+              <tbody id="inventory-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sales history (slide 13) -->
+        <div class="mk-panel">
+          <div class="panel-head">
+            <div>
+              <h2><span lang="en">Sales history</span><span lang="zh-Hant">銷售紀錄</span></h2>
+              <p class="muted mb-0">
+                <span lang="en">Completed and cancelled transactions, kept as business records.</span>
+                <span lang="zh-Hant">已完成與已取消的交易，作為營運紀錄永久保存。</span>
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="mk-table">
+              <thead><tr>
+                <th><span lang="en">Order</span><span lang="zh-Hant">訂單編號</span></th>
+                <th><span lang="en">Date</span><span lang="zh-Hant">日期</span></th>
+                <th><span lang="en">Buyer</span><span lang="zh-Hant">買家</span></th>
+                <th><span lang="en">Items</span><span lang="zh-Hant">商品</span></th>
+                <th><span lang="en">Amount</span><span lang="zh-Hant">金額</span></th>
+                <th><span lang="en">Status</span><span lang="zh-Hant">狀態</span></th>
+              </tr></thead>
+              <tbody id="sales-history-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROLE → PERMISSION → ACTIONS (slide 5) ============ -->
+  <section class="section-sm tab-panel" id="tab-roles" hidden>
+    <div class="container">
+      <div class="mk-panel">
+        <h2><span lang="en">Role → permission → what you can do</span><span lang="zh-Hant">角色 → 權限 → 可執行的操作</span></h2>
+        <p class="muted">
+          <span lang="en">The same person can be all three at once: you may sell your old textbook and buy a bicycle on the same afternoon. What changes is not the person, it is the permission — and it is enforced by the database, not by hiding buttons.</span>
+          <span lang="zh-Hant">同一個人可以同時具備三種身分：可以賣掉舊教科書，也可以買一台自行車。改變的不是人，而是權限──而權限由資料庫把關，不只是把按鈕藏起來。</span>
+        </p>
+        <div class="table-wrap">
+          <table class="mk-table role-table">
+            <thead><tr>
+              <th><span lang="en">Role</span><span lang="zh-Hant">角色</span></th>
+              <th><span lang="en">How you get it</span><span lang="zh-Hant">取得方式</span></th>
+              <th><span lang="en">What it lets you do</span><span lang="zh-Hant">可執行的操作</span></th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="badge gray"><span lang="en">Visitor</span><span lang="zh-Hant">訪客</span></span></td>
+                <td><span lang="en">Not signed in</span><span lang="zh-Hant">未登入</span></td>
+                <td><span lang="en">Browse the listings, see prices and availability. No cart, no orders.</span><span lang="zh-Hant">瀏覽商品、查看價格與庫存。無法加入購物車或下單。</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge green"><span lang="en">Buyer</span><span lang="zh-Hant">買家</span></span></td>
+                <td><span lang="en">Any signed-in account</span><span lang="zh-Hant">任何已登入的帳號</span></td>
+                <td><span lang="en">Add to cart, place orders, confirm that an item arrived, and read your own purchase history.</span><span lang="zh-Hant">加入購物車、下單、確認收到商品，並查看自己的購買紀錄。</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge gold"><span lang="en">Seller</span><span lang="zh-Hant">賣家</span></span></td>
+                <td><span lang="en">Approved by the platform administrator</span><span lang="zh-Hant">經平台管理者核可</span></td>
+                <td><span lang="en">List products, manage inventory, confirm payments, ship orders, see sales records and export them.</span><span lang="zh-Hant">上架商品、管理庫存、確認收款、出貨、查看並匯出銷售紀錄。</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge"><span lang="en">Platform admin</span><span lang="zh-Hant">平台管理者</span></span></td>
+                <td><span lang="en">Back-office role admin or super admin</span><span lang="zh-Hant">後台 admin 或 super admin 角色</span></td>
+                <td><span lang="en">See every transaction, approve or suspend sellers, spot orders that got stuck. Monitoring, not editing: an administrator cannot change somebody else's order.</span><span lang="zh-Hant">查看所有交易、核可或停權賣家、找出卡住的訂單。只監看、不編輯：管理者無法更改他人的訂單。</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3><span lang="en">The life of one order</span><span lang="zh-Hant">一筆訂單的生命週期</span></h3>
+        <ol class="lifecycle">
+          <li><strong><span lang="en">Waiting for payment</span><span lang="zh-Hant">待付款</span></strong>
+            <span lang="en">The buyer placed the order and the stock is already reserved. Either side can still cancel.</span>
+            <span lang="zh-Hant">買家已下單，庫存同時保留。此階段雙方皆可取消。</span></li>
+          <li><strong><span lang="en">Ready to ship</span><span lang="zh-Hant">待出貨</span></strong>
+            <span lang="en">The seller confirmed the money arrived. From here on the record is kept, never deleted.</span>
+            <span lang="zh-Hant">賣家確認已收到款項。此後紀錄只保存，不刪除。</span></li>
+          <li><strong><span lang="en">Shipped</span><span lang="zh-Hant">已出貨</span></strong>
+            <span lang="en">The seller handed the item over or sent it.</span>
+            <span lang="zh-Hant">賣家已交付或寄出商品。</span></li>
+          <li><strong><span lang="en">Completed</span><span lang="zh-Hant">已完成</span></strong>
+            <span lang="en">The buyer confirms it arrived. The transaction becomes part of the sales history.</span>
+            <span lang="zh-Hant">買家確認收到，交易成為銷售紀錄的一部分。</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ CART ============ -->
+<aside class="cart-drawer" id="cart" hidden aria-label="Shopping cart">
+  <header>
+    <h2><span lang="en">Your cart</span><span lang="zh-Hant">購物車</span></h2>
+    <button class="icon-btn" type="button" id="cart-close" aria-label="Close cart">&times;</button>
+  </header>
+  <div class="cart-body" id="cart-body"></div>
+  <footer class="cart-foot">
+    <div class="field full">
+      <label for="cart-note"><span lang="en">Note for the seller</span><span lang="zh-Hant">給賣家的備註</span></label>
+      <input type="text" id="cart-note" maxlength="140" placeholder="Where and when to meet…"
+             data-ph-en="Where and when to meet…" data-ph-zh="約定面交的時間與地點…">
+    </div>
+    <p class="cart-total"><span lang="en">Total</span><span lang="zh-Hant">總計</span> <strong id="cart-total">NT$0</strong></p>
+    <button class="btn btn-primary" type="button" id="cart-submit">
+      <span lang="en">Place order</span><span lang="zh-Hant">送出訂單</span>
+    </button>
+    <p class="form-note">
+      <span lang="en">A cart with items from several sellers becomes one order per seller.</span>
+      <span lang="zh-Hant">若購物車含多位賣家的商品，將依賣家拆分為多筆訂單。</span>
+    </p>
+  </footer>
+</aside>
+<div class="mk-backdrop" id="backdrop" hidden></div>
+
+<!-- ============ PRODUCT DETAIL ============ -->
+<div class="mk-modal" id="product-modal" hidden role="dialog" aria-modal="true" aria-label="Product details">
+  <div class="mk-modal-box" id="product-modal-box"></div>
+</div>
+
+<!-- ============ SIGN IN ============ -->
+<div class="mk-modal" id="auth-modal" hidden role="dialog" aria-modal="true" aria-label="Sign in">
+  <div class="mk-modal-box">
+    <button class="icon-btn modal-close" type="button" data-close-auth aria-label="Close">&times;</button>
+    <h2 id="auth-heading"><span lang="en">Sign in to buy or sell</span><span lang="zh-Hant">登入後即可買賣</span></h2>
+    <p class="muted" id="auth-sub">
+      <span lang="en">The same account works for the marketplace and for the back office.</span>
+      <span lang="zh-Hant">同一組帳號可用於交易平台與後台管理。</span>
+    </p>
+    <form class="form-grid" id="mk-auth-form">
+      <div class="field full" id="mk-field-name" hidden>
+        <label for="mk-name"><span lang="en">Full name</span><span lang="zh-Hant">姓名</span></label>
+        <input type="text" id="mk-name" autocomplete="name">
+      </div>
+      <div class="field full">
+        <label for="mk-email"><span lang="en">Email</span><span lang="zh-Hant">電子郵件</span></label>
+        <input type="email" id="mk-email" required autocomplete="email">
+      </div>
+      <div class="field full">
+        <label for="mk-password"><span lang="en">Password</span><span lang="zh-Hant">密碼</span></label>
+        <input type="password" id="mk-password" required minlength="8" autocomplete="current-password">
+      </div>
+      <div class="field full">
+        <button class="btn btn-primary" type="submit" id="mk-auth-submit">
+          <span lang="en">Sign in</span><span lang="zh-Hant">登入</span>
+        </button>
+      </div>
+    </form>
+    <p class="auth-links">
+      <button type="button" class="linklike" data-mk-mode="signup"><span lang="en">Create an account</span><span lang="zh-Hant">註冊新帳號</span></button>
+      <button type="button" class="linklike" data-mk-mode="signin" hidden><span lang="en">I already have an account</span><span lang="zh-Hant">我已有帳號</span></button>
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/marketplace.js"></script>
+</body>
+</html>

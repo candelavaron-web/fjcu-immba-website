@@ -18,6 +18,7 @@
 
   var PHOTO_BUCKET = "faculty-photos";
   var NEWS_BUCKET = "news-images";
+  var PRODUCT_BUCKET = "product-images";
 
   /* ---------- Faculty ---------- */
 
@@ -104,6 +105,7 @@
 
   function uploadPhoto(file) { return uploadTo(PHOTO_BUCKET, file); }
   function uploadNewsImage(file) { return uploadTo(NEWS_BUCKET, file); }
+  function uploadProductImage(file) { return uploadTo(PRODUCT_BUCKET, file); }
 
   function deletePhoto(url) {
     if (!url || url.indexOf(PHOTO_BUCKET) === -1) return Promise.resolve();
@@ -210,6 +212,108 @@
     }, Promise.resolve()).then(function () { return inserted; });
   }
 
+  /* ---------- Marketplace (class #10) ----------
+     Four roles share these tables; what each one may do is decided
+     by the row level security policies in supabase/marketplace.sql,
+     not here. Orders are never written directly: they go through
+     the rpc_place_order / rpc_advance_order functions, so the state
+     machine Waiting for payment → Ready to ship → Shipped →
+     Completed cannot be skipped from the browser. */
+
+  var CATEGORIES = [
+    { key: "Textbooks", zh: "教科書", icon: "book" },
+    { key: "Electronics", zh: "電子產品", icon: "cpu" },
+    { key: "Furniture", zh: "家具", icon: "building" },
+    { key: "Dorm & kitchen", zh: "宿舍與廚房", icon: "door" },
+    { key: "Clothing", zh: "衣物", icon: "users" },
+    { key: "Bicycles", zh: "自行車", icon: "train" },
+    { key: "Tickets & services", zh: "票券與服務", icon: "doc" },
+    { key: "Other", zh: "其他", icon: "coin" }
+  ];
+
+  // The order lifecycle, in the one place every screen reads it from.
+  var ORDER_STATUS = [
+    { key: "awaiting_payment", en: "Waiting for payment", zh: "待付款", tone: "gold" },
+    { key: "ready_to_ship", en: "Ready to ship", zh: "待出貨", tone: "blue" },
+    { key: "shipped", en: "Shipped", zh: "已出貨", tone: "blue" },
+    { key: "completed", en: "Completed", zh: "已完成", tone: "green" },
+    { key: "cancelled", en: "Cancelled", zh: "已取消", tone: "gray" }
+  ];
+
+  function statusInfo(key) {
+    return ORDER_STATUS.filter(function (s) { return s.key === key; })[0] ||
+      { key: key, en: key, zh: key, tone: "gray" };
+  }
+
+  var LISTING_STATUS = [
+    { key: "active", en: "On sale", zh: "上架中" },
+    { key: "hidden", en: "Hidden", zh: "已隱藏" },
+    { key: "draft", en: "Draft", zh: "草稿" }
+  ];
+
+  /* Products */
+  function listProducts() {
+    return client.from("products").select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+  }
+
+  function listMyProducts(uid) {
+    return client.from("products").select("*")
+      .eq("seller_id", uid)
+      .order("created_at", { ascending: false });
+  }
+
+  function createProduct(row) { return client.from("products").insert(row).select().single(); }
+  function updateProduct(id, row) { return client.from("products").update(row).eq("id", id).select().single(); }
+  function deleteProduct(id) { return client.from("products").delete().eq("id", id); }
+
+  /* Shop profile and seller approval */
+  function myShop(uid) {
+    return client.from("shop_profiles").select("*").eq("id", uid).maybeSingle();
+  }
+
+  function requestSeller(shopName) {
+    return client.rpc("rpc_request_seller", { p_shop_name: shopName || null });
+  }
+
+  function listSellers() {
+    return client.from("shop_profiles").select("*").order("created_at", { ascending: true });
+  }
+
+  function setSellerStatus(id, status) {
+    var patch = { seller_status: status };
+    if (status === "approved") patch.approved_at = new Date().toISOString();
+    return client.from("shop_profiles").update(patch).eq("id", id).select().single();
+  }
+
+  /* Orders — one transaction, three points of view */
+  function placeOrder(items, note) {
+    return client.rpc("rpc_place_order", { p_items: items, p_note: note || null });
+  }
+
+  function advanceOrder(orderId, to) {
+    return client.rpc("rpc_advance_order", { p_order_id: orderId, p_to: to });
+  }
+
+  function myPurchases(uid) {
+    return client.from("orders").select("*, order_items(*)")
+      .eq("buyer_id", uid)
+      .order("created_at", { ascending: false });
+  }
+
+  function mySales(uid) {
+    return client.from("orders").select("*, order_items(*)")
+      .eq("seller_id", uid)
+      .order("created_at", { ascending: false });
+  }
+
+  // Platform administrator: every transaction on the platform.
+  function allOrders() {
+    return client.from("orders").select("*, order_items(*)")
+      .order("created_at", { ascending: false });
+  }
+
   /* ---------- Audit trail ---------- */
 
   function listAudit(limit) {
@@ -269,6 +373,25 @@
     saveOrder: saveOrder,
     uploadPhoto: uploadPhoto,
     uploadNewsImage: uploadNewsImage,
+    uploadProductImage: uploadProductImage,
+    CATEGORIES: CATEGORIES,
+    ORDER_STATUS: ORDER_STATUS,
+    LISTING_STATUS: LISTING_STATUS,
+    statusInfo: statusInfo,
+    listProducts: listProducts,
+    listMyProducts: listMyProducts,
+    createProduct: createProduct,
+    updateProduct: updateProduct,
+    deleteProduct: deleteProduct,
+    myShop: myShop,
+    requestSeller: requestSeller,
+    listSellers: listSellers,
+    setSellerStatus: setSellerStatus,
+    placeOrder: placeOrder,
+    advanceOrder: advanceOrder,
+    myPurchases: myPurchases,
+    mySales: mySales,
+    allOrders: allOrders,
     DEGREE_PROGRAMS: DEGREE_PROGRAMS,
     ALUMNI_FIELDS: ALUMNI_FIELDS,
     listAlumni: listAlumni,

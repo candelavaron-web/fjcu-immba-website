@@ -68,3 +68,40 @@ editing a faculty member and choosing a file uploads it to the same bucket.
 
 Photos belong to Fu Jen Catholic University, College of Management; they are
 reused here for a university course assignment.
+
+## Marketplace (class #10)
+[`marketplace.sql`](marketplace.sql) adds the student-to-student marketplace:
+`shop_profiles`, `products`, `orders` and `order_items`, the storage bucket
+`product-images`, and the two functions that are the only way to write an
+order.
+
+| Role | How you get it | Can do |
+|---|---|---|
+| Visitor | not signed in | browse the active listings |
+| Buyer | any signed-in account | cart, place orders, confirm receipt, own history |
+| Seller | `shop_profiles.seller_status = 'approved'` | list products, manage stock, confirm payment, ship, sales records, CSV |
+| Platform admin | `admin_profiles.role` is `admin` or `super_admin` | see every transaction, approve or suspend sellers — read-only on orders |
+
+Two things are deliberately *not* possible from the browser:
+
+* **Writing an order directly.** There is no insert or update policy on
+  `orders`. `rpc_place_order` locks the product rows, re-reads price and
+  stock from the database and splits the cart into one order per seller;
+  `rpc_advance_order` is the only door into the status machine
+  `awaiting_payment → ready_to_ship → shipped → completed`, and it checks
+  who is calling: only the seller may confirm a payment or a shipment.
+* **Deleting a transaction.** Cancelling is allowed only while an order is
+  still waiting for payment (and it returns the stock). Everything from
+  "payment confirmed" onwards stays as a business record.
+
+Every change to a product or an order is written to `audit_log` by the
+`log_audit_any()` trigger, so the Activity log in the back office also
+covers the marketplace.
+
+Approve the first seller with:
+
+```sql
+update public.shop_profiles
+   set seller_status = 'approved', approved_at = now()
+ where email = 'you@example.com';
+```
